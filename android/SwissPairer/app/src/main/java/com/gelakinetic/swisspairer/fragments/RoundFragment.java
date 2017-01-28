@@ -7,7 +7,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
@@ -16,6 +15,8 @@ import android.widget.Toast;
 
 import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
+import com.gelakinetic.swisspairer.adapters.PairingListAdapter;
+import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
 import com.gelakinetic.swisspairer.algorithm.Pairing;
 import com.gelakinetic.swisspairer.algorithm.Player;
 import com.gelakinetic.swisspairer.algorithm.SwissPairings;
@@ -32,8 +33,8 @@ public class RoundFragment extends SwissFragment {
     private int mRound;
     private Player mPlayers[];
     private ArrayList<Pairing> mPairings = new ArrayList<>();
-    private ArrayAdapter<Player> mStandingsAdapter;
-    private ArrayAdapter<Pairing> mPairingsAdapter;
+    private PlayerListAdapter mStandingsAdapter;
+    private PairingListAdapter mPairingsAdapter;
     private ListView mPairingsListView;
     private ScrollView mScrollView;
     private boolean mPairingsCalculated = false;
@@ -63,13 +64,13 @@ public class RoundFragment extends SwissFragment {
 
         /* Set up the standings list */
         ListView standingsListView = (ListView) v.findViewById(R.id.standings_list_view);
-        mStandingsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mPlayers);
+        mStandingsAdapter = new PlayerListAdapter(getContext(), mPlayers, true);
         standingsListView.setAdapter(mStandingsAdapter);
         ListUtils.setDynamicHeight(standingsListView);
 
         /* Set up the pairings list */
         mPairingsListView = (ListView) v.findViewById(R.id.pairings_list_view);
-        mPairingsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mPairings);
+        mPairingsAdapter = new PairingListAdapter(getContext(), mPairings);
         mPairingsListView.setAdapter(mPairingsAdapter);
         mPairingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -113,6 +114,8 @@ public class RoundFragment extends SwissFragment {
     public void onContinueFabClick(View view) {
 
         // TODO just for testing
+        // TODO problematic, when going backwards to a round, the results are retroactively shown
+        // TODO solution, pass W/L/T as a separate object, don't modify Player objects
         SwissPairings.randomlyAssignWinners(mPairings);
 
         // Create a new Fragment to be placed in the activity layout

@@ -1,8 +1,9 @@
 package com.gelakinetic.swisspairer.algorithm;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 
-public class Player implements Comparable<Player> {
+public class Player implements Comparable<Player>, Serializable {
 
     private String mName;
     private String mTeam;
@@ -13,6 +14,8 @@ public class Player implements Comparable<Player> {
 
     private ArrayList<Player> mPlayedAgainst;
     private boolean mIsBye;
+    private int recordString;
+    private int pairingString;
 
     /**
      * TODO document
@@ -162,5 +165,13 @@ public class Player implements Comparable<Player> {
      */
     public void setTeam(String team) {
         this.mTeam = team;
+    }
+
+    public String getRecordString() {
+        return String.format("%d-%d-%d (%d)", mWins, mLosses, mDraws, getPoints());
+    }
+
+    public String getPairingString() {
+        return getName() + " (" + getPoints() + ")";
     }
 }

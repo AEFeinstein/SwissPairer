@@ -15,6 +15,7 @@ import android.widget.Spinner;
 
 import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
+import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
 import com.gelakinetic.swisspairer.algorithm.Player;
 
 import java.util.ArrayList;
@@ -26,18 +27,18 @@ import java.util.ArrayList;
 public class SetPlayersFragment extends SwissFragment {
 
     ArrayList<Player> mPlayers = new ArrayList<>();
-    private ArrayAdapter<Player> mPlayersAdapter;
+    private PlayerListAdapter mPlayersAdapter;
     private String mTeams[];
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity)getActivity()).showContinueFab();
-        ((MainActivity)getActivity()).showAddFab();
+        ((MainActivity) getActivity()).showContinueFab();
+        ((MainActivity) getActivity()).showAddFab();
 
         View view = inflater.inflate(R.layout.fragment_set_players, null);
-        mPlayersAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mPlayers);
+        mPlayersAdapter = new PlayerListAdapter(getContext(), mPlayers, false);
         ListView listViewPlayers = (ListView) view.findViewById(R.id.player_list);
         listViewPlayers.setAdapter(mPlayersAdapter);
         listViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -50,7 +51,7 @@ public class SetPlayersFragment extends SwissFragment {
         mTeams = (String[]) getArguments().getSerializable(KEY_TEAMS);
 
         //TODO just for testing
-        if(mPlayers.isEmpty()) {
+        if (mPlayers.isEmpty()) {
             mPlayers.add(new Player("Adam", mTeams[0], false));
             mPlayers.add(new Player("Bob", mTeams[0], false));
             mPlayers.add(new Player("Charlie", mTeams[0], false));
@@ -160,12 +161,11 @@ public class SetPlayersFragment extends SwissFragment {
 
         extras.putSerializable(KEY_TEAMS, mTeams);
 
-        if(mPlayers.size() % 2 == 1) {
+        if (mPlayers.size() % 2 == 1) {
             Player bye = new Player("Bye", null, true);
-            if(mPlayers.contains(bye)) {
+            if (mPlayers.contains(bye)) {
                 mPlayers.remove(bye);
-            }
-            else {
+            } else {
                 mPlayers.add(bye);
             }
         }

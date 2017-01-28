@@ -8,12 +8,12 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 
 import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
+import com.gelakinetic.swisspairer.adapters.TeamListAdapter;
 
 import java.util.ArrayList;
 
@@ -24,7 +24,7 @@ import java.util.ArrayList;
 public class SetTeamsFragment extends SwissFragment {
 
     ArrayList<String> mTeams = new ArrayList<>();
-    private ArrayAdapter<String> mTeamsAdapter;
+    private TeamListAdapter mTeamsAdapter;
 
     @Nullable
     @Override
@@ -36,7 +36,7 @@ public class SetTeamsFragment extends SwissFragment {
         View view = inflater.inflate(R.layout.fragment_set_teams, null);
 
         // TODO hide teams until one is added?
-        mTeamsAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mTeams);
+        mTeamsAdapter = new TeamListAdapter(getContext(), mTeams);
         ListView listViewTeams = (ListView) view.findViewById(R.id.team_list);
         listViewTeams.setAdapter(mTeamsAdapter);
         listViewTeams.setOnItemClickListener(new AdapterView.OnItemClickListener() {
