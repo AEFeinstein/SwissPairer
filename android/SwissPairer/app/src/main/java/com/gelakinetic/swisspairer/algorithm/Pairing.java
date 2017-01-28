@@ -56,4 +56,8 @@ public class Pairing implements Comparable<Pairing> {
 	public int compareTo(Pairing o) {
 		return getDelta() - o.getDelta();
 	}
+
+	public String getPairingString() {
+		return getPlayerOne().getName() + " vs. " + getPlayerTwo().getName();
+	}
 }

@@ -8,8 +8,13 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
+import android.widget.CheckBox;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
@@ -25,32 +30,59 @@ public class SetTeamsFragment extends SwissFragment {
 
     ArrayList<String> mTeams = new ArrayList<>();
     private TeamListAdapter mTeamsAdapter;
+    private CheckBox mTeamCheckbox;
+    private ListView mListViewTeams;
+    private TextView mTeamsLabel;
+    private Spinner mRoundSpinner;
+    private EditText mTournamentName;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity)getActivity()).showContinueFab();
-        ((MainActivity)getActivity()).showAddFab();
+        ((MainActivity) getActivity()).showContinueFab();
+        ((MainActivity) getActivity()).showAddFab();
 
         View view = inflater.inflate(R.layout.fragment_set_teams, null);
 
-        // TODO hide teams until one is added?
+        mTournamentName = (EditText) view.findViewById(R.id.tournament_name);
+
+        mTeamCheckbox = (CheckBox) view.findViewById(R.id.team_checkbox);
+        mTeamCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if (b) {
+                    ((MainActivity) getActivity()).showAddFab();
+                    mListViewTeams.setVisibility(View.VISIBLE);
+                    mTeamsLabel.setVisibility(View.VISIBLE);
+                } else {
+                    ((MainActivity) getActivity()).hideAddFab();
+                    mListViewTeams.setVisibility(View.GONE);
+                    mTeamsLabel.setVisibility(View.GONE);
+                }
+            }
+        });
+        mTeamsLabel = (TextView) view.findViewById(R.id.teams_label);
         mTeamsAdapter = new TeamListAdapter(getContext(), mTeams);
-        ListView listViewTeams = (ListView) view.findViewById(R.id.team_list);
-        listViewTeams.setAdapter(mTeamsAdapter);
-        listViewTeams.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListViewTeams = (ListView) view.findViewById(R.id.team_list);
+        mListViewTeams.setAdapter(mTeamsAdapter);
+        mListViewTeams.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 showAddTeamDialog(i);
             }
         });
 
+        mRoundSpinner = (Spinner) view.findViewById(R.id.num_round_spinner);
+
         // TODO just for testing
-        if(mTeams.isEmpty()) {
+        mTournamentName.setText("Test Tournament");
+        mTeamCheckbox.setChecked(true);
+        if (mTeams.isEmpty()) {
             mTeams.add("Red");
             mTeams.add("Blk");
         }
+        mRoundSpinner.setSelection(4);
 
         return view;
     }
@@ -113,23 +145,37 @@ public class SetTeamsFragment extends SwissFragment {
     @Override
     public void onContinueFabClick(View view) {
         // Create a new Fragment to be placed in the activity layout
-        SetPlayersFragment firstFragment = new SetPlayersFragment();
+        SetPlayersFragment setPlayersFragment = new SetPlayersFragment();
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
         // firstFragment.setArguments(getIntent().getExtras());
 
         Bundle extras = new Bundle();
-        String teamsArray[] = new String[mTeams.size()];
-        mTeams.toArray(teamsArray);
-        extras.putSerializable(KEY_TEAMS, teamsArray);
-        firstFragment.setArguments(extras);
+
+        String tName = mTournamentName.getText().toString();
+        if (tName.isEmpty()) {
+            Toast.makeText(getContext(), "Tournament needs a name", Toast.LENGTH_SHORT).show();
+            return;
+        } else {
+            extras.putString(KEY_NAME, mTournamentName.getText().toString());
+        }
+
+        if (mTeamCheckbox.isChecked()) {
+            String teamsArray[] = new String[mTeams.size()];
+            mTeams.toArray(teamsArray);
+            extras.putStringArray(KEY_TEAMS, teamsArray);
+        }
+
+        extras.putInt(KEY_MAX_ROUNDS, Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
+
+        setPlayersFragment.setArguments(extras);
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.fragment_container, firstFragment)
+                .replace(R.id.fragment_container, setPlayersFragment)
                 .commit();
     }
 

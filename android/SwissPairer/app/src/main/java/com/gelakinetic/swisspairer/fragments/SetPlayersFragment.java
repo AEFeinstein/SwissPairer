@@ -29,6 +29,8 @@ public class SetPlayersFragment extends SwissFragment {
     ArrayList<Player> mPlayers = new ArrayList<>();
     private PlayerListAdapter mPlayersAdapter;
     private String mTeams[];
+    private int mMaxTournamentRounds;
+    private String mTournamentName;
 
     @Nullable
     @Override
@@ -48,20 +50,36 @@ public class SetPlayersFragment extends SwissFragment {
             }
         });
 
-        mTeams = (String[]) getArguments().getSerializable(KEY_TEAMS);
+        mTeams = getArguments().getStringArray(KEY_TEAMS);
+        mTournamentName = getArguments().getString(KEY_NAME);
+        mMaxTournamentRounds = getArguments().getInt(KEY_MAX_ROUNDS);
 
         //TODO just for testing
         if (mPlayers.isEmpty()) {
-            mPlayers.add(new Player("Adam", mTeams[0], false));
-            mPlayers.add(new Player("Bob", mTeams[0], false));
-            mPlayers.add(new Player("Charlie", mTeams[0], false));
-            mPlayers.add(new Player("Dan", mTeams[0], false));
-            mPlayers.add(new Player("Edward", mTeams[0], false));
-            mPlayers.add(new Player("Frank", mTeams[1], false));
-            mPlayers.add(new Player("George", mTeams[1], false));
-            mPlayers.add(new Player("Henry", mTeams[1], false));
-            mPlayers.add(new Player("Ira", mTeams[1], false));
-            mPlayers.add(new Player("Jeremy", mTeams[1], false));
+            if(mTeams == null) {
+                mPlayers.add(new Player("Adam", null, false));
+                mPlayers.add(new Player("Bob", null, false));
+                mPlayers.add(new Player("Charlie", null, false));
+                mPlayers.add(new Player("Dan", null, false));
+                mPlayers.add(new Player("Edward", null, false));
+                mPlayers.add(new Player("Frank", null, false));
+                mPlayers.add(new Player("George", null, false));
+                mPlayers.add(new Player("Henry", null, false));
+                mPlayers.add(new Player("Ira", null, false));
+                mPlayers.add(new Player("Jeremy", null, false));
+            }
+            else {
+                mPlayers.add(new Player("Adam", mTeams[0], false));
+                mPlayers.add(new Player("Bob", mTeams[0], false));
+                mPlayers.add(new Player("Charlie", mTeams[0], false));
+                mPlayers.add(new Player("Dan", mTeams[0], false));
+                mPlayers.add(new Player("Edward", mTeams[0], false));
+                mPlayers.add(new Player("Frank", mTeams[1], false));
+                mPlayers.add(new Player("George", mTeams[1], false));
+                mPlayers.add(new Player("Henry", mTeams[1], false));
+                mPlayers.add(new Player("Ira", mTeams[1], false));
+                mPlayers.add(new Player("Jeremy", mTeams[1], false));
+            }
         }
         return view;
     }
@@ -159,8 +177,6 @@ public class SetPlayersFragment extends SwissFragment {
 
         Bundle extras = new Bundle();
 
-        extras.putSerializable(KEY_TEAMS, mTeams);
-
         if (mPlayers.size() % 2 == 1) {
             Player bye = new Player("Bye", null, true);
             if (mPlayers.contains(bye)) {
@@ -171,8 +187,11 @@ public class SetPlayersFragment extends SwissFragment {
         }
         Player playersArray[] = new Player[mPlayers.size()];
         mPlayers.toArray(playersArray);
-        extras.putSerializable(KEY_PLAYERS, playersArray);
 
+        extras.putSerializable(KEY_PLAYERS, playersArray);
+        extras.putStringArray(KEY_TEAMS, mTeams);
+        extras.putString(KEY_NAME, mTournamentName);
+        extras.putInt(KEY_MAX_ROUNDS, mMaxTournamentRounds);
         extras.putInt(KEY_ROUND, 1);
 
         firstRoundFragment.setArguments(extras);

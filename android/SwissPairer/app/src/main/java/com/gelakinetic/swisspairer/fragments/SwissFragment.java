@@ -9,6 +9,8 @@ import android.view.View;
 
 public abstract class SwissFragment extends Fragment {
 
+    static final String KEY_NAME = "Name";
+    static final String KEY_MAX_ROUNDS = "Rounds";
     static final String KEY_TEAMS = "Teams";
     static final String KEY_PLAYERS = "Players";
     static final String KEY_ROUND = "Round";

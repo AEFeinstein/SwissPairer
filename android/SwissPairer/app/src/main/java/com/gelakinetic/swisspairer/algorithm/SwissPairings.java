@@ -10,6 +10,69 @@ public class SwissPairings {
      * Functions for pairing *
      *************************/
 
+    public static ArrayList<Pairing> pairRoundOne(Player[] players, String[] teams) {
+        ArrayList<Pairing> pairings = new ArrayList<>();
+
+        shuffle(players);
+        if (teams != null) {
+            shuffle(teams);
+
+            int teamIdx = 0;
+            /* For all players */
+            for (int idx = 0; idx < players.length; idx++) {
+                /* If the player's team isn't what it should be */
+                if (!players[idx].getTeam().equals(teams[teamIdx])) {
+                    /* Look through the remaining players for a correct team */
+                    boolean swapped = false;
+                    for (int searchIdx = idx + 1; searchIdx < players.length; searchIdx++) {
+                        /* Once one is found, swap the two players */
+                        if (players[searchIdx].getTeam().equals(teams[teamIdx])) {
+                            Player tmp = players[idx];
+                            players[idx] = players[searchIdx];
+                            players[searchIdx] = tmp;
+                            swapped = true;
+                            break;
+                        }
+                    }
+                    /* If no swap was found, try the next team in the same index */
+                    if (!swapped) {
+                        idx--;
+                    }
+                }
+                /* Make sure the next player is from a different team */
+                teamIdx = (teamIdx + 1) % teams.length;
+            }
+
+            Player copy[] = new Player[players.length];
+            System.arraycopy(players, 0, copy, 0, copy.length);
+
+            int toPairInd = 0;
+            while (pairings.size() < players.length / 2) {
+                for (int i = 0; i < players.length; i++) {
+                    int potentialPairInd = (toPairInd + i + players.length / 2) % players.length;
+                    if (null != copy[toPairInd] &&
+                            null != copy[potentialPairInd] &&
+                            copy[toPairInd].canPairAgainst(copy[potentialPairInd])) {
+                        pairings.add(new Pairing(players[toPairInd], players[potentialPairInd]));
+                        copy[toPairInd] = null;
+                        copy[potentialPairInd] = null;
+                        break;
+                    }
+                }
+                toPairInd++;
+            }
+
+
+        } else {
+            /* No teams, and players are already shuffled, so pair players across the table */
+            for (int i = 0; i < players.length / 2; i++) {
+                pairings.add(new Pairing(players[i], players[(i + players.length / 2) % players.length]));
+            }
+        }
+
+        return pairings;
+    }
+
     /**
      * Given a list of players, use Swiss Pairing to pair them off, starting
      * with the player with the most points and working down recursively.
@@ -89,10 +152,10 @@ public class SwissPairings {
                 /* No pairings, so stop searching */
                 return false;
             case 1:
-				/* One pairing, no need to sort */
+                /* One pairing, no need to sort */
                 break;
             default:
-				/* Sort the pairings by how closely the player's points match */
+                /* Sort the pairings by how closely the player's points match */
                 Collections.sort(tmpPairings);
         }
 
@@ -105,14 +168,14 @@ public class SwissPairings {
 
 			/* Check if the search can continue */
             if (!child.canHaveChildren()) {
-				/* There are no more players to pair, so we're done
-				 * Start exiting from the recursion, adding to the list of
+                /* There are no more players to pair, so we're done
+                 * Start exiting from the recursion, adding to the list of
 				 * pairs at each level
 				 */
                 pairings.add(0, child.getPairing());
                 return true;
             } else {
-				/* If there are more players to pair, recurse and find the pairs */
+                /* If there are more players to pair, recurse and find the pairs */
                 if (recursivelyFindPairings(child, players, pairings)) {
 					/* Add this pair to the pairings and keep exiting from
 					 * the recursion
