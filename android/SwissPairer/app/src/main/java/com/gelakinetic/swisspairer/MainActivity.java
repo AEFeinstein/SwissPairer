@@ -78,4 +78,8 @@ public class MainActivity extends AppCompatActivity {
     public void hideAddFab() {
         addFab.setVisibility(View.GONE);
     }
+
+    public void setTitle(String title) {
+        getSupportActionBar().setTitle(title);
+    }
 }

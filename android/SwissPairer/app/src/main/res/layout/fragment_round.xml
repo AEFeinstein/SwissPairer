@@ -10,16 +10,13 @@
         android:orientation="vertical">
 
         <TextView
-            android:id="@+id/round_title"
-            style="@android:style/TextAppearance.Large"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content" />
-
-        <TextView
             android:id="@+id/standings_title"
             style="@android:style/TextAppearance.Large"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
             android:text="Standings" />
 
         <ListView
@@ -27,11 +24,16 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content" />
 
+        <include layout="@layout/divider" />
+
         <TextView
             android:id="@+id/pairings_title"
             style="@android:style/TextAppearance.Large"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="48dp"
+            android:layout_marginLeft="@dimen/activity_horizontal_margin"
+            android:layout_marginRight="@dimen/activity_horizontal_margin"
+            android:gravity="center_vertical"
             android:text="Pairings" />
 
         <ListView

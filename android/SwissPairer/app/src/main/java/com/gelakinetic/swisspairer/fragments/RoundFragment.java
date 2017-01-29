@@ -63,13 +63,13 @@ public class RoundFragment extends SwissFragment {
 
         if (mRound > mTournament.getMaxRounds()) {
             ((MainActivity) getActivity()).hideContinueFab();
-            ((TextView) v.findViewById(R.id.round_title)).setText("Final Results");
+            ((MainActivity) getActivity()).setTitle("Final Results");
             v.findViewById(R.id.pairings_list_view).setVisibility(View.GONE);
             v.findViewById(R.id.pairings_title).setVisibility(View.GONE);
             Collections.sort(mTournament.getRound(mRound).getPlayers());
             mStandingsAdapter.notifyDataSetChanged();
         } else {
-            ((TextView) v.findViewById(R.id.round_title)).setText("Round " + mRound);
+            ((MainActivity) getActivity()).setTitle("Round " + mRound);
             /* Set up the pairings list */
             mPairingsListView = (ListView) v.findViewById(R.id.pairings_list_view);
             mPairingsAdapter = new PairingListAdapter(getContext(), mTournament.getRound(mRound).getPairings());

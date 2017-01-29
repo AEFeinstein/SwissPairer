@@ -1,30 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/entry_player_list_layout"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:orientation="horizontal"
-    android:id="@+id/entry_player_list_layout">
+    android:orientation="horizontal">
 
     <TextView
         android:id="@+id/player_team"
         style="@style/SwissText"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:layout_marginRight="16dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:gravity="center_vertical"
         android:text="team" />
 
     <TextView
         android:id="@+id/player_name"
         style="@style/SwissText"
-        android:layout_width="wrap_content"
+        android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_alignParentTop="true"
-        android:layout_toEndOf="@+id/player_team"
-        android:layout_toRightOf="@+id/player_team"
+        android:layout_weight="1"
         android:gravity="center_vertical"
         android:text="name" />
 
@@ -33,10 +29,9 @@
         style="@style/SwissText"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_alignParentEnd="true"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:gravity="center_vertical"
         android:text="(0-0-0)" />
 
-</RelativeLayout>
+</LinearLayout>

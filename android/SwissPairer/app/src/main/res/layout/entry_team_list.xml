@@ -5,10 +5,12 @@
     android:orientation="vertical">
 
     <TextView
-        android:text="test"
         android:id="@+id/team_name"
-        android:layout_width="wrap_content"
+        style="@style/SwissText"
+        android:layout_width="match_parent"
         android:layout_height="48dp"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:gravity="center_vertical"
-        style="@style/SwissText"/>
+        android:text="test" />
 </LinearLayout>

@@ -8,9 +8,8 @@
         style="@style/SwissText"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_weight="1"
         android:gravity="center"
         android:text="One" />
@@ -26,9 +25,8 @@
         style="@style/SwissText"
         android:layout_width="0dp"
         android:layout_height="48dp"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_weight="1"
         android:gravity="center"
         android:text="Two" />

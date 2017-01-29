@@ -32,6 +32,7 @@ public class SetPlayersFragment extends SwissFragment {
 
         ((MainActivity) getActivity()).showContinueFab();
         ((MainActivity) getActivity()).showAddFab();
+        ((MainActivity) getActivity()).setTitle("Add Players");
 
         loadTournamentData();
 

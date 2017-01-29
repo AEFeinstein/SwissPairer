@@ -26,8 +26,6 @@ import com.gelakinetic.swisspairer.adapters.TeamListAdapter;
 
 public class SetTeamsFragment extends SwissFragment {
 
-    /* UI Elements */
-    private CheckBox mTeamCheckbox;
     private ListView mListViewTeams;
     private TextView mTeamsLabel;
     private Spinner mRoundSpinner;
@@ -42,12 +40,13 @@ public class SetTeamsFragment extends SwissFragment {
 
         ((MainActivity) getActivity()).showContinueFab();
         ((MainActivity) getActivity()).showAddFab();
+        ((MainActivity) getActivity()).setTitle("Tournament Data");
 
         View view = inflater.inflate(R.layout.fragment_set_teams, null);
 
         mTournamentName = (EditText) view.findViewById(R.id.tournament_name);
 
-        mTeamCheckbox = (CheckBox) view.findViewById(R.id.team_checkbox);
+        CheckBox mTeamCheckbox = (CheckBox) view.findViewById(R.id.team_checkbox);
         mTeamCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
