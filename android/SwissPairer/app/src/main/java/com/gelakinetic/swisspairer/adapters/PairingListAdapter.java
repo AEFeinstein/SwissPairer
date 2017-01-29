@@ -39,13 +39,17 @@ public class PairingListAdapter extends ArrayAdapter<Pairing> {
      */
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         /* Get the data item for this position */
         Pairing pairing = getItem(position);
 
         /* Check if an existing view is being reused, otherwise inflate the view */
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.entry_pairing_list, parent, false);
+        }
+
+        if (pairing == null) {
+            return convertView;
         }
 
         /* Lookup view for data population */

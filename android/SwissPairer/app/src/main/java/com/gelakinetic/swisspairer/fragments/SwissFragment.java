@@ -30,14 +30,14 @@ public abstract class SwissFragment extends Fragment {
     private Button mRightButton;
     private View mButtonLayout;
 
-    static final String JSON_SUFFIX = ".json";
+    private static final String JSON_SUFFIX = ".json";
 
     /**
      * TODO document
      *
      * @return
      */
-    public String[] getTournaments() {
+    String[] getTournaments() {
         ArrayList<String> filenames = new ArrayList<>();
         for (File file : getContext().getFilesDir().listFiles()) {
             String filename = file.getName();
@@ -55,7 +55,7 @@ public abstract class SwissFragment extends Fragment {
      *
      * @param filename
      */
-    public void loadTournamentData(String filename) {
+    void loadTournamentData(String filename) {
         try {
             FileReader reader = new FileReader(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
             mTournament = (new Gson()).fromJson(reader, Tournament.class);
@@ -70,7 +70,7 @@ public abstract class SwissFragment extends Fragment {
      *
      * @param filename
      */
-    public void saveTournamentData(String filename) {
+    void saveTournamentData(String filename) {
         try {
             FileWriter writer = new FileWriter(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
             writer.write((new Gson()).toJson(mTournament));
@@ -85,7 +85,7 @@ public abstract class SwissFragment extends Fragment {
      *
      * @param filename
      */
-    public void deleteTournamentData(String filename) {
+    void deleteTournamentData(String filename) {
         File tournamentFile = new File(getContext().getFilesDir(), filename + JSON_SUFFIX);
         if (!tournamentFile.delete()) {
             try {
@@ -105,8 +105,8 @@ public abstract class SwissFragment extends Fragment {
      * @param rightLabel
      * @param rightListener
      */
-    public void setupButtons(View view, int leftLabel, View.OnClickListener leftListener,
-                             int rightLabel, View.OnClickListener rightListener) {
+    void setupButtons(View view, int leftLabel, View.OnClickListener leftListener,
+                      int rightLabel, View.OnClickListener rightListener) {
         mLeftButton = (Button) view.findViewById(R.id.left_button);
         if (leftLabel != 0) {
             mLeftButton.setText(leftLabel);
@@ -131,7 +131,7 @@ public abstract class SwissFragment extends Fragment {
      *
      * @param visibility
      */
-    public void setLeftButtonVisibility(int visibility) {
+    void setLeftButtonVisibility(int visibility) {
         mLeftButton.setVisibility(visibility);
 
         if (mLeftButton.getVisibility() == View.GONE && mRightButton.getVisibility() == View.GONE) {
@@ -146,7 +146,7 @@ public abstract class SwissFragment extends Fragment {
      *
      * @param visibility
      */
-    public void setRightButtonVisibility(int visibility) {
+    void setRightButtonVisibility(int visibility) {
         mRightButton.setVisibility(visibility);
 
         if (mLeftButton.getVisibility() == View.GONE && mRightButton.getVisibility() == View.GONE) {

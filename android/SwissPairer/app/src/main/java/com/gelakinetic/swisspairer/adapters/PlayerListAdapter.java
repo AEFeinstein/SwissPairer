@@ -43,13 +43,17 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
      */
     @NonNull
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(int position, View convertView, @NonNull ViewGroup parent) {
         /* Get the data item for this position */
         Player player = getItem(position);
 
         /* Check if an existing view is being reused, otherwise inflate the view */
         if (convertView == null) {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.entry_player_list, parent, false);
+        }
+
+        if (player == null) {
+            return convertView;
         }
 
         if (player.isBye()) {

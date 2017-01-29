@@ -1,8 +1,13 @@
 package com.gelakinetic.swisspairer.algorithm;
 
+import android.content.Context;
+import android.support.annotation.NonNull;
+
+import com.gelakinetic.swisspairer.R;
+
 public class Pairing implements Comparable<Pairing> {
 
-    private Player mPlayers[] = new Player[2];
+    private final Player[] mPlayers = new Player[2];
     private boolean mReported = false;
     private int mPlayerOneWins;
     private int mPlayerTwoWins;
@@ -35,14 +40,6 @@ public class Pairing implements Comparable<Pairing> {
 
     /**
      * TODO document
-     */
-    @Override
-    public String toString() {
-        return mPlayers[0] + " vs. " + mPlayers[1];
-    }
-
-    /**
-     * TODO document
      *
      * @return
      */
@@ -57,7 +54,7 @@ public class Pairing implements Comparable<Pairing> {
      * TODO document
      */
     @Override
-    public int compareTo(Pairing o) {
+    public int compareTo(@NonNull Pairing o) {
         return getDelta() - o.getDelta();
     }
 
@@ -66,8 +63,8 @@ public class Pairing implements Comparable<Pairing> {
      *
      * @return
      */
-    public String getPairingString() {
-        return getPlayerOne().getName() + " vs. " + getPlayerTwo().getName();
+    public String getPairingString(Context context) {
+        return getPlayerOne().getName() + context.getString(R.string.vs) + getPlayerTwo().getName();
     }
 
     /**
@@ -92,11 +89,7 @@ public class Pairing implements Comparable<Pairing> {
         mPlayerTwoWins = playerTwoWins;
         mDraws = draws;
 
-        if (playerOneWins > 0 || playerTwoWins > 0 || draws > 0) {
-            mReported = true;
-        } else {
-            mReported = false;
-        }
+        mReported = playerOneWins > 0 || playerTwoWins > 0 || draws > 0;
 
     }
 

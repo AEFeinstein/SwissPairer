@@ -6,7 +6,6 @@
     android:padding="16dp">
 
     <LinearLayout
-        android:id="@+id/player_one_layout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal">
@@ -17,16 +16,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Player one" />
+            android:gravity="center_vertical" />
 
         <TextView
-            android:id="@+id/player_one_wins_label"
             style="@style/SwissText"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center_vertical"
-            android:text="Wins" />
+            android:text="@string/wins" />
 
         <Spinner
             android:id="@+id/player_one_wins_spinner"
@@ -37,7 +34,6 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/draws_layout"
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:orientation="horizontal">
@@ -48,7 +44,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical|right"
-            android:text="Draws" />
+            android:text="@string/draws" />
 
         <Spinner
             android:id="@+id/draws_spinner"
@@ -70,16 +66,14 @@
             android:layout_width="0dp"
             android:layout_height="match_parent"
             android:layout_weight="1"
-            android:gravity="center_vertical"
-            android:text="Player two" />
+            android:gravity="center_vertical" />
 
         <TextView
-            android:id="@+id/player_two_wins_label"
             style="@style/SwissText"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center_vertical"
-            android:text="Wins" />
+            android:text="@string/wins" />
 
         <Spinner
             android:id="@+id/player_two_wins_spinner"

@@ -9,6 +9,7 @@
     <include layout="@layout/divider" />
 
     <LinearLayout
+        style="?android:attr/buttonBarStyle"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -17,16 +18,16 @@
 
         <Button
             android:id="@+id/left_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Button" />
+            android:layout_weight="1" />
 
         <Button
             android:id="@+id/right_button"
+            style="?android:attr/buttonBarButtonStyle"
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:text="Button" />
+            android:layout_weight="1" />
     </LinearLayout>
 </LinearLayout>

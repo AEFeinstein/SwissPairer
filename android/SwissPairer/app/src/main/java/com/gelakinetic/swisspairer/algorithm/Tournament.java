@@ -11,8 +11,8 @@ public class Tournament {
     private String mName;
     private long mDate;
     private int mMaxRounds;
-    private ArrayList<String> mTeams = new ArrayList<>();
-    private ArrayList<Round> mRounds = new ArrayList<>();
+    private final ArrayList<String> mTeams = new ArrayList<>();
+    private final ArrayList<Round> mRounds = new ArrayList<>();
 
     /**
      * TODO document

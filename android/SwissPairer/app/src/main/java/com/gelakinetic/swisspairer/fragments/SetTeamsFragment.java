@@ -19,7 +19,6 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.TeamListAdapter;
 
@@ -39,7 +38,7 @@ public class SetTeamsFragment extends SwissFragment {
     private TeamListAdapter mTeamsAdapter;
 
 
-    View.OnClickListener continueListener = new View.OnClickListener() {
+    private final View.OnClickListener continueListener = new View.OnClickListener() {
         /**
          * TODO document
          * @param view
@@ -52,7 +51,7 @@ public class SetTeamsFragment extends SwissFragment {
             // Make sure the tournament has a name
             String tName = mTournamentName.getText().toString();
             if (tName.isEmpty()) {
-                Toast.makeText(getContext(), "Tournament needs a name", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getContext(), R.string.tournament_no_name, Toast.LENGTH_SHORT).show();
                 return;
             } else {
                 mTournament.setName(mTournamentName.getText().toString());
@@ -80,7 +79,7 @@ public class SetTeamsFragment extends SwissFragment {
         }
     };
 
-    View.OnClickListener addListener = new View.OnClickListener() {
+    private final View.OnClickListener addListener = new View.OnClickListener() {
         /**
          * TODO document
          * @param view
@@ -103,9 +102,7 @@ public class SetTeamsFragment extends SwissFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity) getActivity()).setTitle("Tournament Data");
-
-        View view = inflater.inflate(R.layout.fragment_set_teams, null);
+        View view = inflater.inflate(R.layout.fragment_set_teams, container, false);
 
         setupButtons(view, R.string.add_team, addListener, R.string.add_players, continueListener);
         setRightButtonVisibility(View.VISIBLE);
@@ -141,14 +138,14 @@ public class SetTeamsFragment extends SwissFragment {
 
         mRoundSpinner = (Spinner) view.findViewById(R.id.num_round_spinner);
 
-        // TODO just for testing
-        mTournamentName.setText("Test Tournament");
-        mTeamCheckbox.setChecked(true);
-        if (mTournament.getTeams().isEmpty()) {
-            mTournament.getTeams().add("Red");
-            mTournament.getTeams().add("Blk");
-        }
-        mRoundSpinner.setSelection(4);
+//        //just for testing
+//        mTournamentName.setText("Test Tournament");
+//        mTeamCheckbox.setChecked(true);
+//        if (mTournament.getTeams().isEmpty()) {
+//            mTournament.getTeams().add("Red");
+//            mTournament.getTeams().add("Blk");
+//        }
+//        mRoundSpinner.setSelection(4);
 
         setHasOptionsMenu(true);
 
@@ -162,7 +159,7 @@ public class SetTeamsFragment extends SwissFragment {
      */
     private void showAddTeamDialog(final int teamIdx) {
 
-        View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_team, null);
+        View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_team, null, false);
 
         final EditText teamNameEditText = (EditText) customView.findViewById(R.id.team_name_edit_text);
 
@@ -172,8 +169,8 @@ public class SetTeamsFragment extends SwissFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setTitle("Add a Team")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.add_a_team)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -194,7 +191,7 @@ public class SetTeamsFragment extends SwissFragment {
                         mTeamsAdapter.notifyDataSetChanged();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -202,7 +199,7 @@ public class SetTeamsFragment extends SwissFragment {
                 .setView(customView);
 
         if (teamIdx >= 0) {
-            builder.setNeutralButton("Remove", new DialogInterface.OnClickListener() {
+            builder.setNeutralButton(R.string.remove, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mTournament.getTeams().remove(teamIdx);

@@ -9,6 +9,6 @@
         android:inputType="textCapWords"
         android:ems="10"
         android:id="@+id/team_name_edit_text"
-        android:hint="Team Name"
-        android:singleLine="true" />
+        android:hint="@string/team_name"
+        android:maxLines="1" />
 </LinearLayout>

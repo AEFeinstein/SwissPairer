@@ -11,7 +11,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:layout_marginTop="@dimen/activity_vertical_margin"
-        android:hint="Tournament Name" />
+        android:hint="@string/tournament_name" />
 
     <include layout="@layout/divider" />
 
@@ -28,7 +28,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Number of Rounds?" />
+            android:text="@string/num_rounds" />
 
         <Spinner
             android:id="@+id/num_round_spinner"
@@ -52,7 +52,7 @@
             android:layout_height="match_parent"
             android:layout_weight="1"
             android:gravity="center_vertical"
-            android:text="Team Event?" />
+            android:text="@string/team_event" />
 
         <CheckBox
             android:id="@+id/team_checkbox"
@@ -69,13 +69,12 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:gravity="center_vertical"
-        android:text="Teams" />
+        android:text="@string/teams" />
 
     <ListView
         android:id="@+id/team_list"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_below="@+id/teams_label"
         android:layout_weight="1" />
 
     <include layout="@layout/bottom_button_bar" />

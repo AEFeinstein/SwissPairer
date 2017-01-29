@@ -1,12 +1,15 @@
 package com.gelakinetic.swisspairer.algorithm;
 
+import android.support.annotation.NonNull;
+
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Locale;
 import java.util.UUID;
 
 public class Player implements Comparable<Player>, Serializable {
 
-    private long mUuid;
+    private final long mUuid;
 
     private String mName;
     private String mTeam;
@@ -15,8 +18,8 @@ public class Player implements Comparable<Player>, Serializable {
     private int mLosses = 0;
     private int mDraws = 0;
 
-    private ArrayList<Long> mPlayedAgainst;
-    private boolean mIsBye;
+    private final ArrayList<Long> mPlayedAgainst;
+    private final boolean mIsBye;
 
     /**
      * TODO document
@@ -126,7 +129,7 @@ public class Player implements Comparable<Player>, Serializable {
      * @return
      */
     public int getPoints() {
-        return (mWins * 3) + (mDraws * 1);
+        return (mWins * 3) + (mDraws);
     }
 
     /**
@@ -166,18 +169,8 @@ public class Player implements Comparable<Player>, Serializable {
      * @return
      */
     @Override
-    public int compareTo(Player other) {
+    public int compareTo(@NonNull Player other) {
         return other.getPoints() - getPoints();
-    }
-
-    /**
-     * TODO document
-     *
-     * @return
-     */
-    @Override
-    public String toString() {
-        return String.format("%s [%s] %d-%d-%d (%2d)", mName, mTeam, mWins, mLosses, mDraws, getPoints());
     }
 
     /**
@@ -237,7 +230,7 @@ public class Player implements Comparable<Player>, Serializable {
      * @return
      */
     public String getRecordString() {
-        return String.format("%d-%d-%d (%d)", mWins, mLosses, mDraws, getPoints());
+        return String.format(Locale.US, "%d-%d-%d (%d)", mWins, mLosses, mDraws, getPoints());
     }
 
     /**

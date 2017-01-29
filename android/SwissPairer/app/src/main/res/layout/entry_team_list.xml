@@ -11,6 +11,5 @@
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:gravity="center_vertical"
-        android:text="test" />
+        android:gravity="center_vertical" />
 </LinearLayout>

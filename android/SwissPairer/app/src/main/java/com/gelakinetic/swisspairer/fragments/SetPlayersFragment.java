@@ -13,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 
-import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
 import com.gelakinetic.swisspairer.algorithm.Player;
@@ -27,7 +26,7 @@ public class SetPlayersFragment extends SwissFragment {
     private PlayerListAdapter mPlayersAdapter;
 
 
-    View.OnClickListener continueListener = new View.OnClickListener() {
+    private final View.OnClickListener continueListener = new View.OnClickListener() {
         /**
          * TODO document
          * @param view
@@ -45,7 +44,7 @@ public class SetPlayersFragment extends SwissFragment {
             Bundle extras = new Bundle();
 
             if (mTournament.getRound(0).getPlayersSize() % 2 == 1) {
-                Player bye = new Player("Bye", null, true);
+                Player bye = new Player(getString(R.string.bye), null, true);
                 if (mTournament.getRound(0).containsPlayer(bye)) {
                     mTournament.getRound(0).removePlayer(bye);
                 } else {
@@ -68,7 +67,7 @@ public class SetPlayersFragment extends SwissFragment {
         }
     };
 
-    View.OnClickListener addListener = new View.OnClickListener() {
+    private final View.OnClickListener addListener = new View.OnClickListener() {
         /**
          * TODO document
          * @param view
@@ -91,8 +90,6 @@ public class SetPlayersFragment extends SwissFragment {
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity) getActivity()).setTitle("Add Players");
-
         mTournamentFilename = getArguments().getString(KEY_JSON_FILENAME);
         loadTournamentData(mTournamentFilename);
 
@@ -100,7 +97,7 @@ public class SetPlayersFragment extends SwissFragment {
             mTournament.addRound();
         }
 
-        View view = inflater.inflate(R.layout.fragment_set_players, null);
+        View view = inflater.inflate(R.layout.fragment_set_players,  container, false);
 
         setupButtons(view, R.string.add_player, addListener, R.string.start, continueListener);
         setRightButtonVisibility(View.VISIBLE);
@@ -152,7 +149,7 @@ public class SetPlayersFragment extends SwissFragment {
      */
     private void showAddPlayerDialog(final int playerIdx) {
 
-        View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_player, null);
+        View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_player, null, false);
 
         final EditText playerNameEditText = (EditText) customView.findViewById(R.id.player_name_edit_text);
 
@@ -179,8 +176,8 @@ public class SetPlayersFragment extends SwissFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setTitle("Add a Player")
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(R.string.add_a_player)
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 
@@ -211,7 +208,7 @@ public class SetPlayersFragment extends SwissFragment {
                         mPlayersAdapter.notifyDataSetChanged();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                     }
@@ -219,7 +216,7 @@ public class SetPlayersFragment extends SwissFragment {
                 .setView(customView);
 
         if (playerIdx >= 0) {
-            builder.setNeutralButton("Remove", new DialogInterface.OnClickListener() {
+            builder.setNeutralButton(R.string.remove, new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mTournament.getRound(0).removePlayer(playerIdx);

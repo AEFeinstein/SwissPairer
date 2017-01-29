@@ -15,13 +15,13 @@ import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PairingListAdapter;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
 import com.gelakinetic.swisspairer.algorithm.SwissPairings;
 
 import java.util.Collections;
+import java.util.Locale;
 
 /**
  * Created by Adam on 1/27/2017.
@@ -36,7 +36,7 @@ public class RoundFragment extends SwissFragment {
 
     private int mRound;
 
-    View.OnClickListener continueListener = new View.OnClickListener() {
+    private final View.OnClickListener continueListener = new View.OnClickListener() {
         /**
          * TODO document
          *
@@ -94,7 +94,7 @@ public class RoundFragment extends SwissFragment {
             mTournament.addRound();
         }
 
-        View v = inflater.inflate(R.layout.fragment_round, null);
+        View v = inflater.inflate(R.layout.fragment_round, container, false);
 
         setupButtons(v, 0, null, R.string.next_round, continueListener);
         setRightButtonVisibility(View.GONE);
@@ -111,13 +111,13 @@ public class RoundFragment extends SwissFragment {
 
         if (mRound > mTournament.getMaxRounds()) {
             setRightButtonVisibility(View.GONE);
-            ((MainActivity) getActivity()).setTitle("Final Results");
+            ((TextView) v.findViewById(R.id.round_title)).setText(R.string.final_results);
             v.findViewById(R.id.pairings_list_view).setVisibility(View.GONE);
             v.findViewById(R.id.pairings_title).setVisibility(View.GONE);
             Collections.sort(mTournament.getRound(mRound).getPlayers());
             mStandingsAdapter.notifyDataSetChanged();
         } else {
-            ((MainActivity) getActivity()).setTitle("Round " + mRound);
+            ((TextView) v.findViewById(R.id.round_title)).setText(String.format(Locale.getDefault(), getString(R.string.round), mRound));
             /* Set up the pairings list */
             mPairingsListView = (ListView) v.findViewById(R.id.pairings_list_view);
             mPairingsAdapter = new PairingListAdapter(getContext(), mTournament.getRound(mRound).getPairings());
@@ -189,7 +189,7 @@ public class RoundFragment extends SwissFragment {
      */
     private void showMatchResultDialog(final int pairingIdx) {
 
-        View customView = getLayoutInflater(null).inflate(R.layout.dialog_report_match, null);
+        View customView = getLayoutInflater(null).inflate(R.layout.dialog_report_match, null, false);
 
         ((TextView) customView.findViewById(R.id.player_one_name)).setText(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOne().getName());
         ((TextView) customView.findViewById(R.id.player_two_name)).setText(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwo().getName());
@@ -204,8 +204,8 @@ public class RoundFragment extends SwissFragment {
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setTitle(mTournament.getRound(mRound).getPairing(pairingIdx).getPairingString())
-                .setPositiveButton("OK", new DialogInterface.OnClickListener() {
+        builder.setTitle(mTournament.getRound(mRound).getPairing(pairingIdx).getPairingString(getContext()))
+                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         /* Get data from the dialog */
@@ -245,7 +245,7 @@ public class RoundFragment extends SwissFragment {
                         mPairingsAdapter.notifyDataSetChanged();
                     }
                 })
-                .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
 

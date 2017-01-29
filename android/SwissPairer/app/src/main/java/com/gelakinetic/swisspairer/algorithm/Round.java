@@ -8,8 +8,8 @@ import java.util.List;
  */
 
 public class Round {
-    private ArrayList<Player> mPlayers = new ArrayList<>();
-    private ArrayList<Pairing> mPairings = new ArrayList<>();
+    private final ArrayList<Player> mPlayers = new ArrayList<>();
+    private final ArrayList<Pairing> mPairings = new ArrayList<>();
     private boolean mPairingsCommitted = false;
 
     /**

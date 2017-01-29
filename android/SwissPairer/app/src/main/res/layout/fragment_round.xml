@@ -16,14 +16,24 @@
             android:orientation="vertical">
 
             <TextView
-                android:id="@+id/standings_title"
+                android:id="@+id/round_title"
+                style="@android:style/TextAppearance.Large"
+                android:layout_width="match_parent"
+                android:layout_height="48dp"
+                android:layout_marginLeft="@dimen/activity_horizontal_margin"
+                android:layout_marginRight="@dimen/activity_horizontal_margin"
+                android:gravity="center_vertical" />
+
+            <include layout="@layout/divider" />
+
+            <TextView
                 style="@android:style/TextAppearance.Large"
                 android:layout_width="match_parent"
                 android:layout_height="48dp"
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:gravity="center_vertical"
-                android:text="Standings" />
+                android:text="@string/standings" />
 
             <ListView
                 android:id="@+id/standings_list_view"
@@ -40,7 +50,7 @@
                 android:layout_marginLeft="@dimen/activity_horizontal_margin"
                 android:layout_marginRight="@dimen/activity_horizontal_margin"
                 android:gravity="center_vertical"
-                android:text="Pairings" />
+                android:text="@string/pairings" />
 
             <ListView
                 android:id="@+id/pairings_list_view"

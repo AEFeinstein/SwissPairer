@@ -1,14 +1,31 @@
 <resources>
     <string name="app_name">Swiss Pairer</string>
-    <string name="action_settings">Settings</string>
     <string name="next_round">Next Round</string>
     <string name="add_team">Add Team</string>
+    <string name="add_a_team">Add a Team</string>
     <string name="add_players">Add Players</string>
-    <string name="start">Start</string>
     <string name="add_player">Add Player</string>
-    <string name="load_tournament_title">Load Tournament</string>
+    <string name="add_a_player">Add a Player</string>
     <string name="ok">OK</string>
     <string name="cancel">Cancel</string>
+    <string name="remove">Remove</string>
+    <string name="start">Start</string>
+    <string name="load_tournament_title">Load Tournament</string>
     <string name="delete_tournament_title">Delete Tournament</string>
     <string name="no_tournaments">No Saved Tournaments</string>
+    <string name="tournament_no_name">Tournament needs a name</string>
+    <string name="vs">vs.</string>
+    <string name="final_results">Final Results</string>
+    <string name="round">Round %d</string>
+    <string name="bye">Bye</string>
+    <string name="wins">Wins</string>
+    <string name="draws">Draws</string>
+    <string name="standings">Standings</string>
+    <string name="pairings">Pairings</string>
+    <string name="num_rounds">Number of Rounds?</string>
+    <string name="team_event">Team Event?</string>
+    <string name="teams">Teams</string>
+    <string name="player_name">Player Name</string>
+    <string name="team_name">Team Name</string>
+    <string name="tournament_name">Tournament Name</string>
 </resources>

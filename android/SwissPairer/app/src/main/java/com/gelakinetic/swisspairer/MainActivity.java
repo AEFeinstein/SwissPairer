@@ -45,13 +45,4 @@ public class MainActivity extends AppCompatActivity {
                     .commit();
         }
     }
-
-    /**
-     * TODO document
-     *
-     * @param title
-     */
-    public void setTitle(String title) {
-        getSupportActionBar().setTitle(title);
-    }
 }

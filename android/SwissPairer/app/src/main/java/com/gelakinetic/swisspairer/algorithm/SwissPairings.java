@@ -22,7 +22,7 @@ public class SwissPairings {
         ArrayList<Pairing> pairings = new ArrayList<>();
 
         Collections.shuffle(players);
-        if (teams != null) {
+        if (teams != null && teams.size() > 0) {
             Collections.shuffle(teams);
 
             int teamIdx = 0;
@@ -137,7 +137,7 @@ public class SwissPairings {
         int maxPoints = -1;
         Player maxPointPlayer = null;
         for (Player player : players) {
-            if (player.getPoints() > maxPoints && !parent.isPaired(player) &&
+            if (player.getPoints() > maxPoints && parent.isNotPaired(player) &&
                     !player.isBye()) {
                 maxPointPlayer = player;
                 maxPoints = player.getPoints();
@@ -153,7 +153,7 @@ public class SwissPairings {
         ArrayList<Pairing> tmpPairings = new ArrayList<>();
         for (Player player : players) {
             if (player.canPairAgainst(maxPointPlayer) &&
-                    !parent.isPaired(player)) {
+                    parent.isNotPaired(player)) {
                 tmpPairings.add(new Pairing(maxPointPlayer, player));
             }
         }
@@ -176,7 +176,6 @@ public class SwissPairings {
 
 			/* Add the pair to the search tree */
             PairingTreeNode child = new PairingTreeNode(parent, pairing);
-            parent.addPairingChild(child);
 
 			/* Check if the search can continue */
             if (!child.canHaveChildren()) {

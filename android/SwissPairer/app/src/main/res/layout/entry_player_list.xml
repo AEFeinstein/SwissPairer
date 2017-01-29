@@ -15,8 +15,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:gravity="center_vertical"
-        android:text="team" />
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/player_name"
@@ -24,8 +23,7 @@
         android:layout_width="0dp"
         android:layout_height="48dp"
         android:layout_weight="1"
-        android:gravity="center_vertical"
-        android:text="name" />
+        android:gravity="center_vertical" />
 
     <TextView
         android:id="@+id/player_record"
@@ -34,7 +32,6 @@
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:gravity="center_vertical"
-        android:text="(0-0-0)" />
+        android:gravity="center_vertical" />
 
 </LinearLayout>

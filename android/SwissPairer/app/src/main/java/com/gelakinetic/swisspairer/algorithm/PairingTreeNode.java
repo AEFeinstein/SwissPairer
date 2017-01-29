@@ -2,11 +2,10 @@ package com.gelakinetic.swisspairer.algorithm;
 
 import java.util.ArrayList;
 
-public class PairingTreeNode {
+class PairingTreeNode {
 
 	private Pairing mPairing;
-	private ArrayList<Player> mPairedPlayers;
-	private ArrayList<PairingTreeNode> mChildren;
+	private final ArrayList<Player> mPairedPlayers;
 	private int mNumPlayers;
 
 	/**
@@ -17,8 +16,7 @@ public class PairingTreeNode {
 	 */
 	public PairingTreeNode(PairingTreeNode parent, Pairing pairing) {
 
-		mPairedPlayers = new ArrayList<Player>();
-		mChildren = new ArrayList<PairingTreeNode>();
+		mPairedPlayers = new ArrayList<>();
 
 		if (pairing != null) {
 			mPairing = pairing;
@@ -36,20 +34,11 @@ public class PairingTreeNode {
 	/**
 	 * TODO document
 	 *
-	 * @param child
-	 */
-	public void addPairingChild(PairingTreeNode child) {
-		mChildren.add(child);
-	}
-
-	/**
-	 * TODO document
-	 *
 	 * @param player
 	 * @return
 	 */
-	public boolean isPaired(Player player) {
-		return mPairedPlayers.contains(player);
+	public boolean isNotPaired(Player player) {
+		return !mPairedPlayers.contains(player);
 	}
 
 	/**

@@ -9,8 +9,8 @@
         android:inputType="textCapWords"
         android:ems="10"
         android:id="@+id/player_name_edit_text"
-        android:hint="Player Name"
-        android:singleLine="true" />
+        android:hint="@string/player_name"
+        android:maxLines="1" />
 
     <Spinner
         android:layout_width="match_parent"
