@@ -33,6 +33,11 @@ public class Player implements Comparable<Player>, Serializable {
         this.mIsBye = isBye;
     }
 
+    /**
+     * TODO document
+     *
+     * @param player
+     */
     public Player(Player player) {
         this.mUuid = player.mUuid;
 
@@ -47,19 +52,6 @@ public class Player implements Comparable<Player>, Serializable {
         mPlayedAgainst.addAll(player.mPlayedAgainst);
 
         mIsBye = player.mIsBye;
-    }
-
-    public void addMatchResult(Player other, int wins, int losses, int draws) {
-        if (wins > losses) {
-            mWins++;
-        } else if (losses > wins) {
-            mLosses++;
-        } else {
-            mDraws++;
-        }
-        if (!mPlayedAgainst.contains(other.mUuid)) {
-            mPlayedAgainst.add(other.mUuid);
-        }
     }
 
     /**
@@ -188,10 +180,21 @@ public class Player implements Comparable<Player>, Serializable {
         return String.format("%s [%s] %d-%d-%d (%2d)", mName, mTeam, mWins, mLosses, mDraws, getPoints());
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public String getName() {
         return mName;
     }
 
+    /**
+     * TODO document
+     *
+     * @param obj
+     * @return
+     */
     @Override
     public boolean equals(Object obj) {
 
@@ -228,10 +231,20 @@ public class Player implements Comparable<Player>, Serializable {
         this.mTeam = team;
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public String getRecordString() {
         return String.format("%d-%d-%d (%d)", mWins, mLosses, mDraws, getPoints());
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public String getPairingString() {
         return getName();
     }

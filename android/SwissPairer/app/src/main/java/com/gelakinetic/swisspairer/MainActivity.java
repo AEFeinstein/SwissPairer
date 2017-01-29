@@ -8,6 +8,11 @@ import com.gelakinetic.swisspairer.fragments.SetTeamsFragment;
 
 public class MainActivity extends AppCompatActivity {
 
+    /**
+     * TODO document
+     *
+     * @param savedInstanceState
+     */
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -41,6 +46,11 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    /**
+     * TODO document
+     *
+     * @param title
+     */
     public void setTitle(String title) {
         getSupportActionBar().setTitle(title);
     }

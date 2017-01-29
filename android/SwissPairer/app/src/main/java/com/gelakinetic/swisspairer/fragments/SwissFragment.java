@@ -12,6 +12,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.ArrayList;
 
 /**
  * Created by Adam on 1/27/2017.
@@ -20,16 +21,43 @@ import java.io.IOException;
 public abstract class SwissFragment extends Fragment {
 
     Tournament mTournament = new Tournament();
+    String mTournamentFilename;
 
     static final String KEY_ROUND = "Round";
+    static final String KEY_JSON_FILENAME = "Filename";
 
     private Button mLeftButton;
     private Button mRightButton;
     private View mButtonLayout;
 
-    public void loadTournamentData() {
+    static final String JSON_SUFFIX = ".json";
+
+    /**
+     * TODO document
+     *
+     * @return
+     */
+    public String[] getTournaments() {
+        ArrayList<String> filenames = new ArrayList<>();
+        for (File file : getContext().getFilesDir().listFiles()) {
+            String filename = file.getName();
+            if (filename.endsWith(JSON_SUFFIX)) {
+                filenames.add(filename.subSequence(0, filename.length() - JSON_SUFFIX.length()).toString());
+            }
+        }
+        String[] filenamesArr = new String[filenames.size()];
+        filenames.toArray(filenamesArr);
+        return filenamesArr;
+    }
+
+    /**
+     * TODO document
+     *
+     * @param filename
+     */
+    public void loadTournamentData(String filename) {
         try {
-            FileReader reader = new FileReader(new File(getContext().getFilesDir(), "Tourney.json"));
+            FileReader reader = new FileReader(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
             mTournament = (new Gson()).fromJson(reader, Tournament.class);
             reader.close();
         } catch (IOException e) {
@@ -37,9 +65,14 @@ public abstract class SwissFragment extends Fragment {
         }
     }
 
-    public void saveTournamentData() {
+    /**
+     * TODO document
+     *
+     * @param filename
+     */
+    public void saveTournamentData(String filename) {
         try {
-            FileWriter writer = new FileWriter(new File(getContext().getFilesDir(), "Tourney.json"));
+            FileWriter writer = new FileWriter(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
             writer.write((new Gson()).toJson(mTournament));
             writer.close();
         } catch (IOException e) {
@@ -47,6 +80,31 @@ public abstract class SwissFragment extends Fragment {
         }
     }
 
+    /**
+     * TODO document
+     *
+     * @param filename
+     */
+    public void deleteTournamentData(String filename) {
+        File tournamentFile = new File(getContext().getFilesDir(), filename + JSON_SUFFIX);
+        if (!tournamentFile.delete()) {
+            try {
+                throw new IOException("Delete Failed");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    /**
+     * TODO document
+     *
+     * @param view
+     * @param leftLabel
+     * @param leftListener
+     * @param rightLabel
+     * @param rightListener
+     */
     public void setupButtons(View view, int leftLabel, View.OnClickListener leftListener,
                              int rightLabel, View.OnClickListener rightListener) {
         mLeftButton = (Button) view.findViewById(R.id.left_button);
@@ -68,6 +126,11 @@ public abstract class SwissFragment extends Fragment {
         mButtonLayout = view.findViewById(R.id.bottom_button_bar);
     }
 
+    /**
+     * TODO document
+     *
+     * @param visibility
+     */
     public void setLeftButtonVisibility(int visibility) {
         mLeftButton.setVisibility(visibility);
 
@@ -78,6 +141,11 @@ public abstract class SwissFragment extends Fragment {
         }
     }
 
+    /**
+     * TODO document
+     *
+     * @param visibility
+     */
     public void setRightButtonVisibility(int visibility) {
         mRightButton.setVisibility(visibility);
 

@@ -6,4 +6,9 @@
     <string name="add_players">Add Players</string>
     <string name="start">Start</string>
     <string name="add_player">Add Player</string>
+    <string name="load_tournament_title">Load Tournament</string>
+    <string name="ok">OK</string>
+    <string name="cancel">Cancel</string>
+    <string name="delete_tournament_title">Delete Tournament</string>
+    <string name="no_tournaments">No Saved Tournaments</string>
 </resources>

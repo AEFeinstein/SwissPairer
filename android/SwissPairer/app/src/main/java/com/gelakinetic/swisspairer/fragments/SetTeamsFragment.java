@@ -5,6 +5,9 @@ import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
+import android.view.Menu;
+import android.view.MenuInflater;
+import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
@@ -30,23 +33,23 @@ public class SetTeamsFragment extends SwissFragment {
     private TextView mTeamsLabel;
     private Spinner mRoundSpinner;
     private EditText mTournamentName;
+    private CheckBox mTeamCheckbox;
 
     /* Helper UI Objects */
     private TeamListAdapter mTeamsAdapter;
 
 
     View.OnClickListener continueListener = new View.OnClickListener() {
+        /**
+         * TODO document
+         * @param view
+         */
         @Override
         public void onClick(View view) {
             // Create a new Fragment to be placed in the activity layout
             SetPlayersFragment setPlayersFragment = new SetPlayersFragment();
 
-            // In case this activity was started with special instructions from an
-            // Intent, pass the Intent's extras to the fragment as arguments
-            // firstFragment.setArguments(getIntent().getExtras());
-
-            Bundle extras = new Bundle();
-
+            // Make sure the tournament has a name
             String tName = mTournamentName.getText().toString();
             if (tName.isEmpty()) {
                 Toast.makeText(getContext(), "Tournament needs a name", Toast.LENGTH_SHORT).show();
@@ -55,10 +58,17 @@ public class SetTeamsFragment extends SwissFragment {
                 mTournament.setName(mTournamentName.getText().toString());
             }
 
+            if (!mTeamCheckbox.isChecked()) {
+                mTournament.getTeams().clear();
+            }
+
             mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
             mTournament.setDate(System.currentTimeMillis());
-            saveTournamentData();
+            mTournamentFilename = tName;
+            saveTournamentData(mTournamentFilename);
 
+            Bundle extras = new Bundle();
+            extras.putString(KEY_JSON_FILENAME, mTournamentFilename);
             setPlayersFragment.setArguments(extras);
 
             // Add the fragment to the 'fragment_container' FrameLayout
@@ -71,12 +81,24 @@ public class SetTeamsFragment extends SwissFragment {
     };
 
     View.OnClickListener addListener = new View.OnClickListener() {
+        /**
+         * TODO document
+         * @param view
+         */
         @Override
         public void onClick(View view) {
             showAddTeamDialog(-1);
         }
     };
 
+    /**
+     * TODO document
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
@@ -91,7 +113,7 @@ public class SetTeamsFragment extends SwissFragment {
 
         mTournamentName = (EditText) view.findViewById(R.id.tournament_name);
 
-        CheckBox mTeamCheckbox = (CheckBox) view.findViewById(R.id.team_checkbox);
+        mTeamCheckbox = (CheckBox) view.findViewById(R.id.team_checkbox);
         mTeamCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -128,10 +150,16 @@ public class SetTeamsFragment extends SwissFragment {
         }
         mRoundSpinner.setSelection(4);
 
+        setHasOptionsMenu(true);
+
         return view;
     }
 
-    // TODO edit team rather than make a new one
+    /**
+     * TODO document
+     *
+     * @param teamIdx
+     */
     private void showAddTeamDialog(final int teamIdx) {
 
         View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_team, null);
@@ -186,4 +214,103 @@ public class SetTeamsFragment extends SwissFragment {
         builder.show();
     }
 
+    /**
+     * TODO document
+     *
+     * @param menu
+     * @param inflater
+     */
+    @Override
+    public void onCreateOptionsMenu(Menu menu, MenuInflater inflater) {
+        super.onCreateOptionsMenu(menu, inflater);
+        inflater.inflate(R.menu.menu_set_teams, menu);
+    }
+
+    /**
+     * TODO document
+     *
+     * @param item
+     * @return
+     */
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        // handle item selection
+        switch (item.getItemId()) {
+            case R.id.load_tournament:
+                showLoadTournamentDialog();
+                return true;
+            case R.id.delete_tournament:
+                showDeleteTournamentDialog();
+                return true;
+            default:
+                return super.onOptionsItemSelected(item);
+        }
+    }
+
+    /**
+     * TODO document
+     */
+    private void showLoadTournamentDialog() {
+
+        final String[] filenames = getTournaments();
+
+        if (filenames.length == 0) {
+            Toast.makeText(getContext(), R.string.no_tournaments, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        (new AlertDialog.Builder(getContext())).setTitle(R.string.load_tournament_title)
+                .setItems(filenames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mTournamentFilename = filenames[i];
+                        loadTournamentData(mTournamentFilename);
+
+                        mTournamentName.setText(mTournament.getName());
+                        mRoundSpinner.setSelection(mTournament.getMaxRounds() - 1);
+                        if (mTournament.getTeams().isEmpty()) {
+                            mTeamCheckbox.setChecked(false);
+                        } else {
+                            mTeamCheckbox.setChecked(true);
+                        }
+                        mTeamsAdapter.notifyDataSetChanged();
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
+    }
+
+    /**
+     * TODO document
+     */
+    private void showDeleteTournamentDialog() {
+
+        final String[] filenames = getTournaments();
+
+        if (filenames.length == 0) {
+            Toast.makeText(getContext(), R.string.no_tournaments, Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        (new AlertDialog.Builder(getContext())).setTitle(R.string.delete_tournament_title)
+                .setItems(filenames, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+                        mTournamentFilename = filenames[i];
+                        deleteTournamentData(mTournamentFilename);
+                    }
+                })
+                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialogInterface, int i) {
+
+                    }
+                })
+                .show();
+    }
 }

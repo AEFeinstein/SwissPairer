@@ -10,6 +10,7 @@ import java.util.List;
 public class Round {
     private ArrayList<Player> mPlayers = new ArrayList<>();
     private ArrayList<Pairing> mPairings = new ArrayList<>();
+    private boolean mPairingsCommitted = false;
 
     /**
      * TODO document
@@ -105,6 +106,11 @@ public class Round {
         return mPairings;
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public boolean allMatchesReported() {
         for (Pairing pairing : mPairings) {
             if (!pairing.isReported()) {
@@ -114,9 +120,35 @@ public class Round {
         return true;
     }
 
+    /**
+     * TODO document
+     */
     public void commitAllPairings() {
-        for(Pairing pairing : mPairings) {
-            pairing.commitMatchesToPlayers();
+        if (!mPairingsCommitted) {
+            for (Pairing pairing : mPairings) {
+                pairing.commitMatchesToPlayers();
+            }
+            mPairingsCommitted = true;
+        }
+    }
+
+    /**
+     * TODO document
+     *
+     * @param players
+     */
+    public void uncommitAllPairings(ArrayList<Player> players) {
+        if (mPairingsCommitted) {
+            for (Pairing pairing : mPairings) {
+                pairing.uncommitMatchesToPlayers();
+
+                /* Replace old player objects with new ones */
+                players.remove(pairing.getPlayerOne());
+                players.add(pairing.getPlayerOne());
+                players.remove(pairing.getPlayerTwo());
+                players.add(pairing.getPlayerTwo());
+            }
+            mPairingsCommitted = false;
         }
     }
 }

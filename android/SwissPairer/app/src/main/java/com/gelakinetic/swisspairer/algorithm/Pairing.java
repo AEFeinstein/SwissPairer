@@ -14,7 +14,7 @@ public class Pairing implements Comparable<Pairing> {
      * @param player0
      * @param player1
      */
-    public Pairing(Player player0, Player player1) {
+    Pairing(Player player0, Player player1) {
         mPlayers[0] = player0;
         mPlayers[1] = player1;
     }
@@ -46,7 +46,7 @@ public class Pairing implements Comparable<Pairing> {
      *
      * @return
      */
-    public int getDelta() {
+    private int getDelta() {
         if (mPlayers[0].isBye() || mPlayers[1].isBye()) {
             return Integer.MAX_VALUE;
         }
@@ -61,14 +61,31 @@ public class Pairing implements Comparable<Pairing> {
         return getDelta() - o.getDelta();
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public String getPairingString() {
         return getPlayerOne().getName() + " vs. " + getPlayerTwo().getName();
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public boolean isReported() {
         return mReported;
     }
 
+    /**
+     * TODO document
+     *
+     * @param playerOneWins
+     * @param playerTwoWins
+     * @param draws
+     */
     public void reportMatch(int playerOneWins, int playerTwoWins, int draws) {
 
         mPlayerOneWins = playerOneWins;
@@ -83,7 +100,10 @@ public class Pairing implements Comparable<Pairing> {
 
     }
 
-    public void commitMatchesToPlayers() {
+    /**
+     * TODO document
+     */
+    void commitMatchesToPlayers() {
         if (mPlayerOneWins > mPlayerTwoWins) {
             getPlayerOne().addWin(getPlayerTwo());
             getPlayerTwo().addLoss(getPlayerOne());
@@ -96,8 +116,10 @@ public class Pairing implements Comparable<Pairing> {
         }
     }
 
-    // TODO call this when going backwards
-    public void uncommitMatchesToPlayers() {
+    /**
+     * TODO document
+     */
+    void uncommitMatchesToPlayers() {
         if (mPlayerOneWins > mPlayerTwoWins) {
             getPlayerOne().removeWin(getPlayerTwo());
             getPlayerTwo().removeLoss(getPlayerOne());
@@ -110,22 +132,47 @@ public class Pairing implements Comparable<Pairing> {
         }
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public boolean playerOneWon() {
         return mReported && mPlayerOneWins > mPlayerTwoWins;
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public boolean playerTwoWon() {
         return mReported && mPlayerOneWins < mPlayerTwoWins;
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public int getPlayerOneWins() {
         return mPlayerOneWins;
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public int getPlayerTwoWins() {
         return mPlayerTwoWins;
     }
 
+    /**
+     * TODO document
+     *
+     * @return
+     */
     public int getDraws() {
         return mDraws;
     }

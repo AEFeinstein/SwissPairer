@@ -18,10 +18,24 @@ import java.util.List;
 
 public class TeamListAdapter extends ArrayAdapter<String> {
 
+    /**
+     * TODO document
+     *
+     * @param context
+     * @param objects
+     */
     public TeamListAdapter(Context context, List<String> objects) {
         super(context, 0, objects);
     }
 
+    /**
+     * TODO document
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

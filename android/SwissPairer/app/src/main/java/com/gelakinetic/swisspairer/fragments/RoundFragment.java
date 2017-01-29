@@ -37,6 +37,11 @@ public class RoundFragment extends SwissFragment {
     private int mRound;
 
     View.OnClickListener continueListener = new View.OnClickListener() {
+        /**
+         * TODO document
+         *
+         * @param view
+         */
         @Override
         public void onClick(View view) {
 
@@ -44,11 +49,6 @@ public class RoundFragment extends SwissFragment {
          * the next fragment
          */
             mTournament.getRound(mRound).commitAllPairings();
-
-            // TODO just for testing
-            // TODO problematic, when going backwards to a round, the results are retroactively shown
-            // TODO solution, pass W/L/T as a separate object, don't modify Player objects
-            //SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
 
             // Create a new Fragment to be placed in the activity layout
             RoundFragment nextRoundFragment = new RoundFragment();
@@ -59,8 +59,9 @@ public class RoundFragment extends SwissFragment {
 
             Bundle extras = new Bundle();
             extras.putInt(KEY_ROUND, mRound + 1);
+            extras.putString(KEY_JSON_FILENAME, mTournamentFilename);
 
-            saveTournamentData();
+            saveTournamentData(mTournamentFilename);
 
             nextRoundFragment.setArguments(extras);
 
@@ -73,11 +74,20 @@ public class RoundFragment extends SwissFragment {
         }
     };
 
+    /**
+     * TODO document
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        loadTournamentData();
+        mTournamentFilename = getArguments().getString(KEY_JSON_FILENAME);
+        loadTournamentData(mTournamentFilename);
         mRound = getArguments().getInt(KEY_ROUND);
 
         if (mTournament.getRounds().size() == mRound) {
@@ -146,43 +156,37 @@ public class RoundFragment extends SwissFragment {
                         mPairingsAdapter.notifyDataSetChanged();
                         ListUtils.setDynamicHeight(mPairingsListView);
                         mScrollView.fullScroll(ScrollView.FOCUS_UP);
+
+                        //TODO just for testing
+                        SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
+                        mPairingsAdapter.notifyDataSetChanged();
+                        setRightButtonVisibility(View.VISIBLE);
                     }
                 }.execute();
             } else {
+                if (mTournament.getRound(mRound).allMatchesReported()) {
+                    // TODO if data changes, delete all rounds after this one
+                    mTournament.getRound(mRound).uncommitAllPairings(mTournament.getRound(mRound).getPlayers());
+
+                    saveTournamentData(mTournamentFilename);
+                    setRightButtonVisibility(View.VISIBLE);
+                }
                 mStandingsAdapter.notifyDataSetChanged();
                 mPairingsAdapter.notifyDataSetChanged();
                 ListUtils.setDynamicHeight(mPairingsListView);
                 mScrollView.fullScroll(ScrollView.FOCUS_UP);
 
-                if (mTournament.getRound(mRound).allMatchesReported()) {
-                    setRightButtonVisibility(View.VISIBLE);
-                }
             }
         }
+
         return v;
     }
 
-    public static class ListUtils {
-        static void setDynamicHeight(ListView mListView) {
-            ListAdapter mListAdapter = mListView.getAdapter();
-            if (mListAdapter == null) {
-                // when adapter is null
-                return;
-            }
-            int height = 0;
-            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
-            for (int i = 0; i < mListAdapter.getCount(); i++) {
-                View listItem = mListAdapter.getView(i, null, mListView);
-                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
-                height += listItem.getMeasuredHeight();
-            }
-            ViewGroup.LayoutParams params = mListView.getLayoutParams();
-            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
-            mListView.setLayoutParams(params);
-            mListView.requestLayout();
-        }
-    }
-
+    /**
+     * TODO document
+     *
+     * @param pairingIdx
+     */
     private void showMatchResultDialog(final int pairingIdx) {
 
         View customView = getLayoutInflater(null).inflate(R.layout.dialog_report_match, null);
@@ -204,20 +208,40 @@ public class RoundFragment extends SwissFragment {
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
+                        /* Get data from the dialog */
                         int playerOneWins = Integer.parseInt((String) playerOneSpinner.getSelectedItem());
                         int playerTwoWins = Integer.parseInt((String) playerTwoSpinner.getSelectedItem());
                         int draws = Integer.parseInt((String) drawsSpinner.getSelectedItem());
 
+                        /* Check to see if there were any changes */
+                        boolean changed = false;
+                        if (playerOneWins != mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOneWins() ||
+                                playerTwoWins != mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwoWins() ||
+                                draws != mTournament.getRound(mRound).getPairing(pairingIdx).getDraws()) {
+                            changed = true;
+                        }
+
+                        /* Report the match */
                         mTournament.getRound(mRound).getPairing(pairingIdx).reportMatch(playerOneWins, playerTwoWins, draws);
 
+                        /* If all matches are reported, show the button to move on */
                         if (mTournament.getRound(mRound).allMatchesReported()) {
                             setRightButtonVisibility(View.VISIBLE);
                         } else {
                             setRightButtonVisibility(View.GONE);
                         }
 
-                        saveTournamentData();
+                        /* If something changed, delete all rounds after this one */
+                        if (changed) {
+                            for (int round = mTournament.getRounds().size() - 1; round > mRound; round--) {
+                                mTournament.getRounds().remove(round);
+                            }
+                        }
 
+                        /* Save the tournament data */
+                        saveTournamentData(mTournamentFilename);
+
+                        /* Update the UI */
                         mPairingsAdapter.notifyDataSetChanged();
                     }
                 })
@@ -230,5 +254,31 @@ public class RoundFragment extends SwissFragment {
                 .setView(customView);
 
         builder.show();
+    }
+
+    public static class ListUtils {
+        /**
+         * TODO document
+         *
+         * @param mListView
+         */
+        static void setDynamicHeight(ListView mListView) {
+            ListAdapter mListAdapter = mListView.getAdapter();
+            if (mListAdapter == null) {
+                // when adapter is null
+                return;
+            }
+            int height = 0;
+            int desiredWidth = View.MeasureSpec.makeMeasureSpec(mListView.getWidth(), View.MeasureSpec.UNSPECIFIED);
+            for (int i = 0; i < mListAdapter.getCount(); i++) {
+                View listItem = mListAdapter.getView(i, null, mListView);
+                listItem.measure(desiredWidth, View.MeasureSpec.UNSPECIFIED);
+                height += listItem.getMeasuredHeight();
+            }
+            ViewGroup.LayoutParams params = mListView.getLayoutParams();
+            params.height = height + (mListView.getDividerHeight() * (mListAdapter.getCount() - 1));
+            mListView.setLayoutParams(params);
+            mListView.requestLayout();
+        }
     }
 }

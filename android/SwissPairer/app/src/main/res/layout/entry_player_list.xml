@@ -2,15 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:id="@+id/entry_player_list_layout"
     android:layout_width="match_parent"
-    android:layout_height="wrap_content"
+    android:layout_height="48dp"
     android:orientation="horizontal">
+
+    <View
+        android:layout_width="@dimen/activity_horizontal_margin"
+        android:layout_height="match_parent" />
 
     <TextView
         android:id="@+id/player_team"
         style="@style/SwissText"
         android:layout_width="wrap_content"
         android:layout_height="48dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:gravity="center_vertical"
         android:text="team" />

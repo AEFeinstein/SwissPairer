@@ -28,6 +28,10 @@ public class SetPlayersFragment extends SwissFragment {
 
 
     View.OnClickListener continueListener = new View.OnClickListener() {
+        /**
+         * TODO document
+         * @param view
+         */
         @Override
         public void onClick(View view) {
 
@@ -49,8 +53,9 @@ public class SetPlayersFragment extends SwissFragment {
                 }
             }
 
-            saveTournamentData();
+            saveTournamentData(mTournamentFilename);
             extras.putInt(KEY_ROUND, 1);
+            extras.putString(KEY_JSON_FILENAME, mTournamentFilename);
 
             firstRoundFragment.setArguments(extras);
 
@@ -64,19 +69,32 @@ public class SetPlayersFragment extends SwissFragment {
     };
 
     View.OnClickListener addListener = new View.OnClickListener() {
+        /**
+         * TODO document
+         * @param view
+         */
         @Override
         public void onClick(View view) {
             showAddPlayerDialog(-1);
         }
     };
 
+    /**
+     * TODO document
+     *
+     * @param inflater
+     * @param container
+     * @param savedInstanceState
+     * @return
+     */
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         ((MainActivity) getActivity()).setTitle("Add Players");
 
-        loadTournamentData();
+        mTournamentFilename = getArguments().getString(KEY_JSON_FILENAME);
+        loadTournamentData(mTournamentFilename);
 
         if (mTournament.getRounds().isEmpty()) {
             mTournament.addRound();
@@ -100,7 +118,7 @@ public class SetPlayersFragment extends SwissFragment {
 
         //TODO just for testing
         if (mTournament.getRound(0).getPlayersSize() == 0) {
-            if (mTournament.getTeams() == null) {
+            if (mTournament.getTeams() == null || mTournament.getTeams().isEmpty()) {
                 mTournament.getRound(0).addPlayer(new Player("Adam", null, false));
                 mTournament.getRound(0).addPlayer(new Player("Bob", null, false));
                 mTournament.getRound(0).addPlayer(new Player("Charlie", null, false));
@@ -127,6 +145,11 @@ public class SetPlayersFragment extends SwissFragment {
         return view;
     }
 
+    /**
+     * TODO document
+     *
+     * @param playerIdx
+     */
     private void showAddPlayerDialog(final int playerIdx) {
 
         View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_player, null);

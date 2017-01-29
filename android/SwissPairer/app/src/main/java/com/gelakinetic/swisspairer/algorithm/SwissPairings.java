@@ -9,12 +9,15 @@ public class SwissPairings {
 
     /*************************
      * Functions for pairing *
-     * ***********************
+     * ***********************/
+
+    /**
+     * TODO document
      *
      * @param players
      * @param teams
+     * @return
      */
-
     public static ArrayList<Pairing> pairRoundOne(ArrayList<Player> players, List<String> teams) {
         ArrayList<Pairing> pairings = new ArrayList<>();
 
@@ -222,16 +225,13 @@ public class SwissPairings {
 
                 switch (rand.nextInt(3)) {
                     case 0:
-                        pairing.getPlayerOne().addWin(pairing.getPlayerTwo());
-                        pairing.getPlayerTwo().addLoss(pairing.getPlayerOne());
+                        pairing.reportMatch(1, 0, 0);
                         break;
                     case 1:
-                        pairing.getPlayerOne().addLoss(pairing.getPlayerTwo());
-                        pairing.getPlayerTwo().addWin(pairing.getPlayerOne());
+                        pairing.reportMatch(0, 1, 0);
                         break;
                     case 2:
-                        pairing.getPlayerOne().addDraw(pairing.getPlayerTwo());
-                        pairing.getPlayerTwo().addDraw(pairing.getPlayerOne());
+                        pairing.reportMatch(0, 0, 1);
                         break;
                 }
             }

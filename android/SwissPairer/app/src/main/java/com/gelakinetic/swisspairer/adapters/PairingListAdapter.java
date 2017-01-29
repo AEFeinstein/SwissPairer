@@ -19,10 +19,24 @@ import java.util.List;
 
 public class PairingListAdapter extends ArrayAdapter<Pairing> {
 
+    /**
+     * TODO document
+     *
+     * @param context
+     * @param objects
+     */
     public PairingListAdapter(Context context, List<Pairing> objects) {
         super(context, 0, objects);
     }
 
+    /**
+     * TODO document
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {

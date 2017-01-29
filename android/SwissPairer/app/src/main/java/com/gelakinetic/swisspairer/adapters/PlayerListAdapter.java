@@ -21,16 +21,26 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
 
     private final boolean mShowStandings;
 
+    /**
+     * TODO document
+     *
+     * @param context
+     * @param objects
+     * @param showStandings
+     */
     public PlayerListAdapter(Context context, List<Player> objects, boolean showStandings) {
         super(context, 0, objects);
         mShowStandings = showStandings;
     }
 
-    public PlayerListAdapter(Context context, Player[] objects, boolean showStandings) {
-        super(context, 0, objects);
-        mShowStandings = showStandings;
-    }
-
+    /**
+     * TODO document
+     *
+     * @param position
+     * @param convertView
+     * @param parent
+     * @return
+     */
     @NonNull
     @Override
     public View getView(int position, View convertView, ViewGroup parent) {
@@ -45,8 +55,7 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
         if (player.isBye()) {
             convertView.findViewById(R.id.entry_player_list_layout).setVisibility(View.GONE);
             return convertView;
-        }
-        else {
+        } else {
             convertView.findViewById(R.id.entry_player_list_layout).setVisibility(View.VISIBLE);
         }
 
