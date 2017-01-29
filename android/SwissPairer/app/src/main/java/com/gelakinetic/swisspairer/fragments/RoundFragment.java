@@ -132,7 +132,7 @@ public class RoundFragment extends SwissFragment {
 
             /* If there aren't pairings already, make pairings */
             if (mTournament.getRound(mRound).getPairings().isEmpty()) {
-                // TODO progress spinner ?
+                // Maybe add a progressBar while the pairings are being paired?
                 /* Find the pairings in the background */
                 new AsyncTask<Void, Void, Void>() {
                     @Override
@@ -157,15 +157,14 @@ public class RoundFragment extends SwissFragment {
                         ListUtils.setDynamicHeight(mPairingsListView);
                         mScrollView.fullScroll(ScrollView.FOCUS_UP);
 
-                        //TODO just for testing
-                        SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
-                        mPairingsAdapter.notifyDataSetChanged();
-                        setRightButtonVisibility(View.VISIBLE);
+//                        //TODO just for testing
+//                        SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
+//                        mPairingsAdapter.notifyDataSetChanged();
+//                        setRightButtonVisibility(View.VISIBLE);
                     }
                 }.execute();
             } else {
                 if (mTournament.getRound(mRound).allMatchesReported()) {
-                    // TODO if data changes, delete all rounds after this one
                     mTournament.getRound(mRound).uncommitAllPairings(mTournament.getRound(mRound).getPlayers());
 
                     saveTournamentData(mTournamentFilename);

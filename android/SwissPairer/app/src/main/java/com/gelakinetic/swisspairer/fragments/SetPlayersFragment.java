@@ -113,32 +113,32 @@ public class SetPlayersFragment extends SwissFragment {
             }
         });
 
-        //TODO just for testing
-        if (mTournament.getRound(0).getPlayersSize() == 0) {
-            if (mTournament.getTeams() == null || mTournament.getTeams().isEmpty()) {
-                mTournament.getRound(0).addPlayer(new Player("Adam", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Bob", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Charlie", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Dan", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Edward", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Frank", null, false));
-                mTournament.getRound(0).addPlayer(new Player("George", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Henry", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Ira", null, false));
-                mTournament.getRound(0).addPlayer(new Player("Jeremy", null, false));
-            } else {
-                mTournament.getRound(0).addPlayer(new Player("Adam", mTournament.getTeams().get(0), false));
-                mTournament.getRound(0).addPlayer(new Player("Bob", mTournament.getTeams().get(0), false));
-                mTournament.getRound(0).addPlayer(new Player("Charlie", mTournament.getTeams().get(0), false));
-                mTournament.getRound(0).addPlayer(new Player("Dan", mTournament.getTeams().get(0), false));
-                mTournament.getRound(0).addPlayer(new Player("Edward", mTournament.getTeams().get(0), false));
-                mTournament.getRound(0).addPlayer(new Player("Frank", mTournament.getTeams().get(1), false));
-                mTournament.getRound(0).addPlayer(new Player("George", mTournament.getTeams().get(1), false));
-                mTournament.getRound(0).addPlayer(new Player("Henry", mTournament.getTeams().get(1), false));
-                mTournament.getRound(0).addPlayer(new Player("Ira", mTournament.getTeams().get(1), false));
-                mTournament.getRound(0).addPlayer(new Player("Jeremy", mTournament.getTeams().get(1), false));
-            }
-        }
+//        //TODO just for testing
+//        if (mTournament.getRound(0).getPlayersSize() == 0) {
+//            if (mTournament.getTeams() == null || mTournament.getTeams().isEmpty()) {
+//                mTournament.getRound(0).addPlayer(new Player("Adam", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Bob", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Charlie", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Dan", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Edward", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Frank", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("George", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Henry", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Ira", null, false));
+//                mTournament.getRound(0).addPlayer(new Player("Jeremy", null, false));
+//            } else {
+//                mTournament.getRound(0).addPlayer(new Player("Adam", mTournament.getTeams().get(0), false));
+//                mTournament.getRound(0).addPlayer(new Player("Bob", mTournament.getTeams().get(0), false));
+//                mTournament.getRound(0).addPlayer(new Player("Charlie", mTournament.getTeams().get(0), false));
+//                mTournament.getRound(0).addPlayer(new Player("Dan", mTournament.getTeams().get(0), false));
+//                mTournament.getRound(0).addPlayer(new Player("Edward", mTournament.getTeams().get(0), false));
+//                mTournament.getRound(0).addPlayer(new Player("Frank", mTournament.getTeams().get(1), false));
+//                mTournament.getRound(0).addPlayer(new Player("George", mTournament.getTeams().get(1), false));
+//                mTournament.getRound(0).addPlayer(new Player("Henry", mTournament.getTeams().get(1), false));
+//                mTournament.getRound(0).addPlayer(new Player("Ira", mTournament.getTeams().get(1), false));
+//                mTournament.getRound(0).addPlayer(new Player("Jeremy", mTournament.getTeams().get(1), false));
+//            }
+//        }
         return view;
     }
 
