@@ -36,12 +36,46 @@ public class RoundFragment extends SwissFragment {
 
     private int mRound;
 
+    View.OnClickListener continueListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+        /* Now that all matches are reported, commit them to the player objects before starting
+         * the next fragment
+         */
+            mTournament.getRound(mRound).commitAllPairings();
+
+            // TODO just for testing
+            // TODO problematic, when going backwards to a round, the results are retroactively shown
+            // TODO solution, pass W/L/T as a separate object, don't modify Player objects
+            //SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
+
+            // Create a new Fragment to be placed in the activity layout
+            RoundFragment nextRoundFragment = new RoundFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            // firstFragment.setArguments(getIntent().getExtras());
+
+            Bundle extras = new Bundle();
+            extras.putInt(KEY_ROUND, mRound + 1);
+
+            saveTournamentData();
+
+            nextRoundFragment.setArguments(extras);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, nextRoundFragment)
+                    .commit();
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-
-        ((MainActivity) getActivity()).hideContinueFab();
-        ((MainActivity) getActivity()).hideAddFab();
 
         loadTournamentData();
         mRound = getArguments().getInt(KEY_ROUND);
@@ -51,6 +85,10 @@ public class RoundFragment extends SwissFragment {
         }
 
         View v = inflater.inflate(R.layout.fragment_round, null);
+
+        setupButtons(v, 0, null, R.string.next_round, continueListener);
+        setRightButtonVisibility(View.GONE);
+        setLeftButtonVisibility(View.GONE);
 
         /* Get a reference to the scroll view */
         mScrollView = (ScrollView) v.findViewById(R.id.scroll_view);
@@ -62,7 +100,7 @@ public class RoundFragment extends SwissFragment {
         ListUtils.setDynamicHeight(standingsListView);
 
         if (mRound > mTournament.getMaxRounds()) {
-            ((MainActivity) getActivity()).hideContinueFab();
+            setRightButtonVisibility(View.GONE);
             ((MainActivity) getActivity()).setTitle("Final Results");
             v.findViewById(R.id.pairings_list_view).setVisibility(View.GONE);
             v.findViewById(R.id.pairings_title).setVisibility(View.GONE);
@@ -116,52 +154,12 @@ public class RoundFragment extends SwissFragment {
                 ListUtils.setDynamicHeight(mPairingsListView);
                 mScrollView.fullScroll(ScrollView.FOCUS_UP);
 
-                if(mTournament.getRound(mRound).allMatchesReported()) {
-                    ((MainActivity) getActivity()).showContinueFab();
+                if (mTournament.getRound(mRound).allMatchesReported()) {
+                    setRightButtonVisibility(View.VISIBLE);
                 }
             }
         }
         return v;
-    }
-
-    @Override
-    public void onContinueFabClick(View view) {
-
-        /* Now that all matches are reported, commit them to the player objects before starting
-         * the next fragment
-         */
-        mTournament.getRound(mRound).commitAllPairings();
-
-        // TODO just for testing
-        // TODO problematic, when going backwards to a round, the results are retroactively shown
-        // TODO solution, pass W/L/T as a separate object, don't modify Player objects
-        //SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
-
-        // Create a new Fragment to be placed in the activity layout
-        RoundFragment nextRoundFragment = new RoundFragment();
-
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        // firstFragment.setArguments(getIntent().getExtras());
-
-        Bundle extras = new Bundle();
-        extras.putInt(KEY_ROUND, mRound + 1);
-
-        saveTournamentData();
-
-        nextRoundFragment.setArguments(extras);
-
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.fragment_container, nextRoundFragment)
-                .commit();
-    }
-
-    @Override
-    public void onAddFabClick(View view) {
-
     }
 
     public static class ListUtils {
@@ -213,9 +211,9 @@ public class RoundFragment extends SwissFragment {
                         mTournament.getRound(mRound).getPairing(pairingIdx).reportMatch(playerOneWins, playerTwoWins, draws);
 
                         if (mTournament.getRound(mRound).allMatchesReported()) {
-                            ((MainActivity) getActivity()).showContinueFab();
+                            setRightButtonVisibility(View.VISIBLE);
                         } else {
-                            ((MainActivity) getActivity()).hideContinueFab();
+                            setRightButtonVisibility(View.GONE);
                         }
 
                         saveTournamentData();

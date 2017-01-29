@@ -1,4 +1,9 @@
 <resources>
     <string name="app_name">Swiss Pairer</string>
     <string name="action_settings">Settings</string>
+    <string name="next_round">Next Round</string>
+    <string name="add_team">Add Team</string>
+    <string name="add_players">Add Players</string>
+    <string name="start">Start</string>
+    <string name="add_player">Add Player</string>
 </resources>

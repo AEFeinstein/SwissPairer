@@ -5,7 +5,8 @@
     <color name="colorAccent">#FF4081</color>
     <color name="black">#FF000000</color>
 
-    <color name="blue" >#FF0d47a1</color>
-    <color name="green" >#FF1b5e20</color>
-    <color name="red" >#FFb71c1c</color>
+    <!--Material 700 Series-->
+    <color name="blue">#FF1976D2</color>
+    <color name="green">#FF388E3C</color>
+    <color name="red">#FFd32f2f</color>
 </resources>

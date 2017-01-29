@@ -26,12 +26,54 @@ public class SetPlayersFragment extends SwissFragment {
 
     private PlayerListAdapter mPlayersAdapter;
 
+
+    View.OnClickListener continueListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+
+            // Create a new Fragment to be placed in the activity layout
+            RoundFragment firstRoundFragment = new RoundFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            // firstFragment.setArguments(getIntent().getExtras());
+
+            Bundle extras = new Bundle();
+
+            if (mTournament.getRound(0).getPlayersSize() % 2 == 1) {
+                Player bye = new Player("Bye", null, true);
+                if (mTournament.getRound(0).containsPlayer(bye)) {
+                    mTournament.getRound(0).removePlayer(bye);
+                } else {
+                    mTournament.getRound(0).addPlayer(bye);
+                }
+            }
+
+            saveTournamentData();
+            extras.putInt(KEY_ROUND, 1);
+
+            firstRoundFragment.setArguments(extras);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, firstRoundFragment)
+                    .commit();
+        }
+    };
+
+    View.OnClickListener addListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            showAddPlayerDialog(-1);
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity) getActivity()).showContinueFab();
-        ((MainActivity) getActivity()).showAddFab();
         ((MainActivity) getActivity()).setTitle("Add Players");
 
         loadTournamentData();
@@ -41,6 +83,11 @@ public class SetPlayersFragment extends SwissFragment {
         }
 
         View view = inflater.inflate(R.layout.fragment_set_players, null);
+
+        setupButtons(view, R.string.add_player, addListener, R.string.start, continueListener);
+        setRightButtonVisibility(View.VISIBLE);
+        setLeftButtonVisibility(View.VISIBLE);
+
         mPlayersAdapter = new PlayerListAdapter(getContext(), mTournament.getRound(0).getPlayers(), false);
         ListView listViewPlayers = (ListView) view.findViewById(R.id.player_list);
         listViewPlayers.setAdapter(mPlayersAdapter);
@@ -161,42 +208,4 @@ public class SetPlayersFragment extends SwissFragment {
         builder.show();
     }
 
-    @Override
-    public void onContinueFabClick(View view) {
-
-        // Create a new Fragment to be placed in the activity layout
-        RoundFragment firstRoundFragment = new RoundFragment();
-
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        // firstFragment.setArguments(getIntent().getExtras());
-
-        Bundle extras = new Bundle();
-
-        if (mTournament.getRound(0).getPlayersSize() % 2 == 1) {
-            Player bye = new Player("Bye", null, true);
-            if (mTournament.getRound(0).containsPlayer(bye)) {
-                mTournament.getRound(0).removePlayer(bye);
-            } else {
-                mTournament.getRound(0).addPlayer(bye);
-            }
-        }
-
-        saveTournamentData();
-        extras.putInt(KEY_ROUND, 1);
-
-        firstRoundFragment.setArguments(extras);
-
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.fragment_container, firstRoundFragment)
-                .commit();
-    }
-
-    @Override
-    public void onAddFabClick(View view) {
-        showAddPlayerDialog(-1);
-    }
 }

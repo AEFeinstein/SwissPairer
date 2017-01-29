@@ -34,15 +34,60 @@ public class SetTeamsFragment extends SwissFragment {
     /* Helper UI Objects */
     private TeamListAdapter mTeamsAdapter;
 
+
+    View.OnClickListener continueListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            // Create a new Fragment to be placed in the activity layout
+            SetPlayersFragment setPlayersFragment = new SetPlayersFragment();
+
+            // In case this activity was started with special instructions from an
+            // Intent, pass the Intent's extras to the fragment as arguments
+            // firstFragment.setArguments(getIntent().getExtras());
+
+            Bundle extras = new Bundle();
+
+            String tName = mTournamentName.getText().toString();
+            if (tName.isEmpty()) {
+                Toast.makeText(getContext(), "Tournament needs a name", Toast.LENGTH_SHORT).show();
+                return;
+            } else {
+                mTournament.setName(mTournamentName.getText().toString());
+            }
+
+            mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
+            mTournament.setDate(System.currentTimeMillis());
+            saveTournamentData();
+
+            setPlayersFragment.setArguments(extras);
+
+            // Add the fragment to the 'fragment_container' FrameLayout
+            getFragmentManager()
+                    .beginTransaction()
+                    .addToBackStack(null)
+                    .replace(R.id.fragment_container, setPlayersFragment)
+                    .commit();
+        }
+    };
+
+    View.OnClickListener addListener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            showAddTeamDialog(-1);
+        }
+    };
+
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity) getActivity()).showContinueFab();
-        ((MainActivity) getActivity()).showAddFab();
         ((MainActivity) getActivity()).setTitle("Tournament Data");
 
         View view = inflater.inflate(R.layout.fragment_set_teams, null);
+
+        setupButtons(view, R.string.add_team, addListener, R.string.add_players, continueListener);
+        setRightButtonVisibility(View.VISIBLE);
+        setLeftButtonVisibility(View.VISIBLE);
 
         mTournamentName = (EditText) view.findViewById(R.id.tournament_name);
 
@@ -51,12 +96,12 @@ public class SetTeamsFragment extends SwissFragment {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
                 if (b) {
-                    ((MainActivity) getActivity()).showAddFab();
+                    setLeftButtonVisibility(View.VISIBLE);
                     mListViewTeams.setVisibility(View.VISIBLE);
                     mTeamsLabel.setVisibility(View.VISIBLE);
                 } else {
-                    ((MainActivity) getActivity()).hideAddFab();
-                    mListViewTeams.setVisibility(View.GONE);
+                    setLeftButtonVisibility(View.GONE);
+                    mListViewTeams.setVisibility(View.INVISIBLE);
                     mTeamsLabel.setVisibility(View.GONE);
                 }
             }
@@ -141,47 +186,4 @@ public class SetTeamsFragment extends SwissFragment {
         builder.show();
     }
 
-    @Override
-    public void onContinueFabClick(View view) {
-        // Create a new Fragment to be placed in the activity layout
-        SetPlayersFragment setPlayersFragment = new SetPlayersFragment();
-
-        // In case this activity was started with special instructions from an
-        // Intent, pass the Intent's extras to the fragment as arguments
-        // firstFragment.setArguments(getIntent().getExtras());
-
-        Bundle extras = new Bundle();
-
-        String tName = mTournamentName.getText().toString();
-        if (tName.isEmpty()) {
-            Toast.makeText(getContext(), "Tournament needs a name", Toast.LENGTH_SHORT).show();
-            return;
-        } else {
-            mTournament.setName(mTournamentName.getText().toString());
-        }
-
-//        if (mTeamCheckbox.isChecked()) {
-//            String teamsArray[] = new String[mTournament.getTeams().size()];
-//            mTournament.getTeams().toArray(teamsArray);
-//            extras.putStringArray(KEY_TEAMS, teamsArray);
-//        }
-
-        mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
-        mTournament.setDate(System.currentTimeMillis());
-        saveTournamentData();
-
-        setPlayersFragment.setArguments(extras);
-
-        // Add the fragment to the 'fragment_container' FrameLayout
-        getFragmentManager()
-                .beginTransaction()
-                .addToBackStack(null)
-                .replace(R.id.fragment_container, setPlayersFragment)
-                .commit();
-    }
-
-    @Override
-    public void onAddFabClick(View view) {
-        showAddTeamDialog(-1);
-    }
 }
