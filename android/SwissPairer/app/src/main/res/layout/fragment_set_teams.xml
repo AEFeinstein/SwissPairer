@@ -61,16 +61,6 @@
     </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/teams_label"
-        style="@style/SwissText"
-        android:layout_width="match_parent"
-        android:layout_height="48dp"
-        android:layout_marginLeft="@dimen/activity_horizontal_margin"
-        android:layout_marginRight="@dimen/activity_horizontal_margin"
-        android:gravity="center_vertical"
-        android:text="@string/teams" />
-
     <ListView
         android:id="@+id/team_list"
         android:layout_width="match_parent"

@@ -16,7 +16,6 @@ import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.gelakinetic.swisspairer.R;
@@ -29,7 +28,6 @@ import com.gelakinetic.swisspairer.adapters.TeamListAdapter;
 public class SetTeamsFragment extends SwissFragment {
 
     private ListView mListViewTeams;
-    private TextView mTeamsLabel;
     private Spinner mRoundSpinner;
     private EditText mTournamentName;
     private CheckBox mTeamCheckbox;
@@ -59,6 +57,9 @@ public class SetTeamsFragment extends SwissFragment {
 
             if (!mTeamCheckbox.isChecked()) {
                 mTournament.getTeams().clear();
+            } else if (mTournament.getTeams().size() < 2) {
+                Toast.makeText(getContext(), R.string.no_teams, Toast.LENGTH_SHORT).show();
+                return;
             }
 
             mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
@@ -106,7 +107,7 @@ public class SetTeamsFragment extends SwissFragment {
 
         setupButtons(view, R.string.add_team, addListener, R.string.add_players, continueListener);
         setRightButtonVisibility(View.VISIBLE);
-        setLeftButtonVisibility(View.VISIBLE);
+        setLeftButtonVisibility(View.GONE);
 
         mTournamentName = (EditText) view.findViewById(R.id.tournament_name);
 
@@ -117,15 +118,12 @@ public class SetTeamsFragment extends SwissFragment {
                 if (b) {
                     setLeftButtonVisibility(View.VISIBLE);
                     mListViewTeams.setVisibility(View.VISIBLE);
-                    mTeamsLabel.setVisibility(View.VISIBLE);
                 } else {
                     setLeftButtonVisibility(View.GONE);
                     mListViewTeams.setVisibility(View.INVISIBLE);
-                    mTeamsLabel.setVisibility(View.GONE);
                 }
             }
         });
-        mTeamsLabel = (TextView) view.findViewById(R.id.teams_label);
         mTeamsAdapter = new TeamListAdapter(getContext(), mTournament.getTeams());
         mListViewTeams = (ListView) view.findViewById(R.id.team_list);
         mListViewTeams.setAdapter(mTeamsAdapter);
@@ -270,6 +268,8 @@ public class SetTeamsFragment extends SwissFragment {
                         } else {
                             mTeamCheckbox.setChecked(true);
                         }
+                        mTeamsAdapter = new TeamListAdapter(getContext(), mTournament.getTeams());
+                        mListViewTeams.setAdapter(mTeamsAdapter);
                         mTeamsAdapter.notifyDataSetChanged();
                     }
                 })

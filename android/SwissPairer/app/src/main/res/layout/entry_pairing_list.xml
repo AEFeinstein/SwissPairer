@@ -17,7 +17,7 @@
         android:layout_width="wrap_content"
         android:layout_height="48dp"
         android:gravity="center_vertical"
-        android:text="@string/vs" />
+        android:text="@string/vs_noplayer" />
 
     <TextView
         android:id="@+id/player_right"

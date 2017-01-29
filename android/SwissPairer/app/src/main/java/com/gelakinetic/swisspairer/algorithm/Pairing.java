@@ -5,6 +5,8 @@ import android.support.annotation.NonNull;
 
 import com.gelakinetic.swisspairer.R;
 
+import java.util.Locale;
+
 public class Pairing implements Comparable<Pairing> {
 
     private final Player[] mPlayers = new Player[2];
@@ -64,7 +66,7 @@ public class Pairing implements Comparable<Pairing> {
      * @return
      */
     public String getPairingString(Context context) {
-        return getPlayerOne().getName() + context.getString(R.string.vs) + getPlayerTwo().getName();
+        return String.format(Locale.getDefault(), context.getString(R.string.vs), getPlayerOne().getName(), getPlayerTwo().getName());
     }
 
     /**

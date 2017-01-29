@@ -12,6 +12,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
@@ -42,6 +43,12 @@ public class SetPlayersFragment extends SwissFragment {
             // firstFragment.setArguments(getIntent().getExtras());
 
             Bundle extras = new Bundle();
+
+            // Make sure there are at least two players
+            if (mTournament.getRound(0).getPlayers().size() < 2) {
+                Toast.makeText(getContext(), R.string.no_players, Toast.LENGTH_SHORT).show();
+                return;
+            }
 
             if (mTournament.getRound(0).getPlayersSize() % 2 == 1) {
                 Player bye = new Player(getString(R.string.bye), null, true);
@@ -97,7 +104,7 @@ public class SetPlayersFragment extends SwissFragment {
             mTournament.addRound();
         }
 
-        View view = inflater.inflate(R.layout.fragment_set_players,  container, false);
+        View view = inflater.inflate(R.layout.fragment_set_players, container, false);
 
         setupButtons(view, R.string.add_player, addListener, R.string.start, continueListener);
         setRightButtonVisibility(View.VISIBLE);
@@ -155,7 +162,7 @@ public class SetPlayersFragment extends SwissFragment {
 
         final Spinner teamSpinner = (Spinner) customView.findViewById(R.id.team_spinner);
         if (mTournament.getTeams() == null || mTournament.getTeams().size() == 0) {
-            teamSpinner.setVisibility(View.GONE);
+            customView.findViewById(R.id.team_entry).setVisibility(View.GONE);
         } else {
             ArrayAdapter teamAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mTournament.getTeams());
             teamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
