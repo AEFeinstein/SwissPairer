@@ -42,21 +42,27 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
             convertView = LayoutInflater.from(getContext()).inflate(R.layout.entry_player_list, parent, false);
         }
 
-        /* Lookup view for data population */
-        if(player.getTeam() != null) {
-            convertView.findViewById(R.id.player_team).setVisibility(View.VISIBLE);
-            ((TextView) convertView.findViewById(R.id.player_team)).setText("[" + player.getTeam() + "]");
+        if (player.isBye()) {
+            convertView.findViewById(R.id.entry_player_list_layout).setVisibility(View.GONE);
+            return convertView;
         }
         else {
+            convertView.findViewById(R.id.entry_player_list_layout).setVisibility(View.VISIBLE);
+        }
+
+        /* Lookup view for data population */
+        if (player.getTeam() != null) {
+            convertView.findViewById(R.id.player_team).setVisibility(View.VISIBLE);
+            ((TextView) convertView.findViewById(R.id.player_team)).setText("[" + player.getTeam() + "]");
+        } else {
             convertView.findViewById(R.id.player_team).setVisibility(View.GONE);
         }
         ((TextView) convertView.findViewById(R.id.player_name)).setText(player.getName());
 
-        if(mShowStandings) {
+        if (mShowStandings) {
             convertView.findViewById(R.id.player_record).setVisibility(View.VISIBLE);
             ((TextView) convertView.findViewById(R.id.player_record)).setText(player.getRecordString());
-        }
-        else {
+        } else {
             convertView.findViewById(R.id.player_record).setVisibility(View.GONE);
         }
 

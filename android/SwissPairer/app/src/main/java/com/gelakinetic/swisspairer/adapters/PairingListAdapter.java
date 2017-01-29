@@ -35,8 +35,26 @@ public class PairingListAdapter extends ArrayAdapter<Pairing> {
         }
 
         /* Lookup view for data population */
-        ((TextView) convertView.findViewById(R.id.player_left)).setText(pairing.getPlayerOne().getPairingString());
-        ((TextView) convertView.findViewById(R.id.player_right)).setText(pairing.getPlayerTwo().getPairingString());
+        TextView playerOneLabel = ((TextView) convertView.findViewById(R.id.player_left));
+        TextView playerTwoLabel = ((TextView) convertView.findViewById(R.id.player_right));
+        playerOneLabel.setText(pairing.getPlayerOne().getPairingString());
+        playerTwoLabel.setText(pairing.getPlayerTwo().getPairingString());
+
+        if (pairing.isReported()) {
+            if (pairing.playerOneWon()) {
+                playerOneLabel.setTextColor(getContext().getResources().getColor(R.color.green));
+                playerTwoLabel.setTextColor(getContext().getResources().getColor(R.color.red));
+            } else if (pairing.playerTwoWon()) {
+                playerOneLabel.setTextColor(getContext().getResources().getColor(R.color.red));
+                playerTwoLabel.setTextColor(getContext().getResources().getColor(R.color.green));
+            } else {
+                playerOneLabel.setTextColor(getContext().getResources().getColor(R.color.blue));
+                playerTwoLabel.setTextColor(getContext().getResources().getColor(R.color.blue));
+            }
+        } else {
+            playerOneLabel.setTextColor(getContext().getResources().getColor(R.color.black));
+            playerTwoLabel.setTextColor(getContext().getResources().getColor(R.color.black));
+        }
 
         /* Return the completed view to render on screen */
         return convertView;

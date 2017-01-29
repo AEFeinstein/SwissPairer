@@ -2,8 +2,11 @@ package com.gelakinetic.swisspairer.algorithm;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.UUID;
 
 public class Player implements Comparable<Player>, Serializable {
+
+    private long mUuid;
 
     private String mName;
     private String mTeam;
@@ -12,10 +15,8 @@ public class Player implements Comparable<Player>, Serializable {
     private int mLosses = 0;
     private int mDraws = 0;
 
-    private ArrayList<Player> mPlayedAgainst;
+    private ArrayList<Long> mPlayedAgainst;
     private boolean mIsBye;
-    private int recordString;
-    private int pairingString;
 
     /**
      * TODO document
@@ -24,13 +25,17 @@ public class Player implements Comparable<Player>, Serializable {
      * @param team
      */
     public Player(String name, String team, boolean isBye) {
+        this.mUuid = UUID.randomUUID().getMostSignificantBits();
+
         this.mName = name;
         this.mTeam = team;
-        this.mPlayedAgainst = new ArrayList<Player>();
+        this.mPlayedAgainst = new ArrayList<>();
         this.mIsBye = isBye;
     }
 
     public Player(Player player) {
+        this.mUuid = player.mUuid;
+
         mName = player.mName;
         mTeam = player.mTeam;
 
@@ -44,6 +49,19 @@ public class Player implements Comparable<Player>, Serializable {
         mIsBye = player.mIsBye;
     }
 
+    public void addMatchResult(Player other, int wins, int losses, int draws) {
+        if (wins > losses) {
+            mWins++;
+        } else if (losses > wins) {
+            mLosses++;
+        } else {
+            mDraws++;
+        }
+        if (!mPlayedAgainst.contains(other.mUuid)) {
+            mPlayedAgainst.add(other.mUuid);
+        }
+    }
+
     /**
      * TODO document
      *
@@ -51,8 +69,8 @@ public class Player implements Comparable<Player>, Serializable {
      */
     public void addWin(Player other) {
         mWins++;
-        if (!mPlayedAgainst.contains(other)) {
-            mPlayedAgainst.add(other);
+        if (!mPlayedAgainst.contains(other.mUuid)) {
+            mPlayedAgainst.add(other.mUuid);
         }
     }
 
@@ -63,8 +81,8 @@ public class Player implements Comparable<Player>, Serializable {
      */
     public void addDraw(Player other) {
         mDraws++;
-        if (!mPlayedAgainst.contains(other)) {
-            mPlayedAgainst.add(other);
+        if (!mPlayedAgainst.contains(other.mUuid)) {
+            mPlayedAgainst.add(other.mUuid);
         }
     }
 
@@ -75,9 +93,39 @@ public class Player implements Comparable<Player>, Serializable {
      */
     public void addLoss(Player other) {
         mLosses++;
-        if (!mPlayedAgainst.contains(other)) {
-            mPlayedAgainst.add(other);
+        if (!mPlayedAgainst.contains(other.mUuid)) {
+            mPlayedAgainst.add(other.mUuid);
         }
+    }
+
+    /**
+     * TODO document
+     *
+     * @param other
+     */
+    public void removeWin(Player other) {
+        mWins--;
+        mPlayedAgainst.remove(other.mUuid);
+    }
+
+    /**
+     * TODO document
+     *
+     * @param other
+     */
+    public void removeDraw(Player other) {
+        mDraws--;
+        mPlayedAgainst.remove(other.mUuid);
+    }
+
+    /**
+     * TODO document
+     *
+     * @param other
+     */
+    public void removeLoss(Player other) {
+        mLosses--;
+        mPlayedAgainst.remove(other.mUuid);
     }
 
     /**
@@ -97,7 +145,7 @@ public class Player implements Comparable<Player>, Serializable {
      */
     public boolean canPairAgainst(Player other) {
         return (this.mTeam == null || other.mTeam == null || !this.mTeam.equals(other.mTeam)) &&
-                !mPlayedAgainst.contains(other) &&
+                !mPlayedAgainst.contains(other.mUuid) &&
                 !this.equals(other);
     }
 
@@ -106,7 +154,7 @@ public class Player implements Comparable<Player>, Serializable {
      *
      * @return
      */
-    boolean isBye() {
+    public boolean isBye() {
         return mIsBye;
     }
 
@@ -146,7 +194,20 @@ public class Player implements Comparable<Player>, Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return (obj != null) && obj instanceof Player && ((Player) obj).getName().equals(getName()) && ((Player) obj).getTeam().equals(getTeam());
+
+        /* Make sure it's a nonnull player */
+        if ((obj == null) || !(obj instanceof Player)) {
+            return false;
+        }
+
+        String thatTeam = ((Player) obj).getTeam();
+        if ((thatTeam == null && getTeam() == null) ||
+                thatTeam != null && thatTeam.equals(getTeam())) {
+            if (((Player) obj).getName().equals(getName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**
@@ -172,6 +233,7 @@ public class Player implements Comparable<Player>, Serializable {
     }
 
     public String getPairingString() {
-        return getName() + " (" + getPoints() + ")";
+        return getName();
     }
+
 }

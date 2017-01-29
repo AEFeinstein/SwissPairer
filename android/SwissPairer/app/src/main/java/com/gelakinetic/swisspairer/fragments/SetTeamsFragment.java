@@ -20,21 +20,21 @@ import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.TeamListAdapter;
 
-import java.util.ArrayList;
-
 /**
  * Created by Adam on 1/27/2017.
  */
 
 public class SetTeamsFragment extends SwissFragment {
 
-    ArrayList<String> mTeams = new ArrayList<>();
-    private TeamListAdapter mTeamsAdapter;
+    /* UI Elements */
     private CheckBox mTeamCheckbox;
     private ListView mListViewTeams;
     private TextView mTeamsLabel;
     private Spinner mRoundSpinner;
     private EditText mTournamentName;
+
+    /* Helper UI Objects */
+    private TeamListAdapter mTeamsAdapter;
 
     @Nullable
     @Override
@@ -63,7 +63,7 @@ public class SetTeamsFragment extends SwissFragment {
             }
         });
         mTeamsLabel = (TextView) view.findViewById(R.id.teams_label);
-        mTeamsAdapter = new TeamListAdapter(getContext(), mTeams);
+        mTeamsAdapter = new TeamListAdapter(getContext(), mTournament.getTeams());
         mListViewTeams = (ListView) view.findViewById(R.id.team_list);
         mListViewTeams.setAdapter(mTeamsAdapter);
         mListViewTeams.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -78,9 +78,9 @@ public class SetTeamsFragment extends SwissFragment {
         // TODO just for testing
         mTournamentName.setText("Test Tournament");
         mTeamCheckbox.setChecked(true);
-        if (mTeams.isEmpty()) {
-            mTeams.add("Red");
-            mTeams.add("Blk");
+        if (mTournament.getTeams().isEmpty()) {
+            mTournament.getTeams().add("Red");
+            mTournament.getTeams().add("Blk");
         }
         mRoundSpinner.setSelection(4);
 
@@ -95,7 +95,7 @@ public class SetTeamsFragment extends SwissFragment {
         final EditText teamNameEditText = (EditText) customView.findViewById(R.id.team_name_edit_text);
 
         if (teamIdx >= 0) {
-            teamNameEditText.setText(mTeams.get(teamIdx));
+            teamNameEditText.setText(mTournament.getTeams().get(teamIdx));
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
@@ -109,14 +109,14 @@ public class SetTeamsFragment extends SwissFragment {
 
                         if (!newTeamName.isEmpty()) {
                             if (teamIdx >= 0) {
-                                for (int teamsIdx = 0; teamsIdx < mTeams.size(); teamsIdx++) {
-                                    if (teamsIdx != teamIdx && mTeams.get(teamsIdx).equals(newTeamName)) {
+                                for (int teamsIdx = 0; teamsIdx < mTournament.getTeams().size(); teamsIdx++) {
+                                    if (teamsIdx != teamIdx && mTournament.getTeams().get(teamsIdx).equals(newTeamName)) {
                                         return; // duplicate
                                     }
                                 }
-                                mTeams.set(teamIdx, newTeamName);
-                            } else if (!mTeams.contains(teamNameEditText.getText().toString())) {
-                                mTeams.add(teamNameEditText.getText().toString());
+                                mTournament.getTeams().set(teamIdx, newTeamName);
+                            } else if (!mTournament.getTeams().contains(teamNameEditText.getText().toString())) {
+                                mTournament.getTeams().add(teamNameEditText.getText().toString());
                             }
                         }
                         mTeamsAdapter.notifyDataSetChanged();
@@ -133,7 +133,7 @@ public class SetTeamsFragment extends SwissFragment {
             builder.setNeutralButton("Remove", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    mTeams.remove(teamIdx);
+                    mTournament.getTeams().remove(teamIdx);
                     mTeamsAdapter.notifyDataSetChanged();
                 }
             });
@@ -158,16 +158,18 @@ public class SetTeamsFragment extends SwissFragment {
             Toast.makeText(getContext(), "Tournament needs a name", Toast.LENGTH_SHORT).show();
             return;
         } else {
-            extras.putString(KEY_NAME, mTournamentName.getText().toString());
+            mTournament.setName(mTournamentName.getText().toString());
         }
 
-        if (mTeamCheckbox.isChecked()) {
-            String teamsArray[] = new String[mTeams.size()];
-            mTeams.toArray(teamsArray);
-            extras.putStringArray(KEY_TEAMS, teamsArray);
-        }
+//        if (mTeamCheckbox.isChecked()) {
+//            String teamsArray[] = new String[mTournament.getTeams().size()];
+//            mTournament.getTeams().toArray(teamsArray);
+//            extras.putStringArray(KEY_TEAMS, teamsArray);
+//        }
 
-        extras.putInt(KEY_MAX_ROUNDS, Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
+        mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
+        mTournament.setDate(System.currentTimeMillis());
+        saveTournamentData();
 
         setPlayersFragment.setArguments(extras);
 

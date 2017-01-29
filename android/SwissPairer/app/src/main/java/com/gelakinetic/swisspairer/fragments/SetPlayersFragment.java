@@ -18,19 +18,13 @@ import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
 import com.gelakinetic.swisspairer.algorithm.Player;
 
-import java.util.ArrayList;
-
 /**
  * Created by Adam on 1/27/2017.
  */
 
 public class SetPlayersFragment extends SwissFragment {
 
-    ArrayList<Player> mPlayers = new ArrayList<>();
     private PlayerListAdapter mPlayersAdapter;
-    private String mTeams[];
-    private int mMaxTournamentRounds;
-    private String mTournamentName;
 
     @Nullable
     @Override
@@ -39,8 +33,14 @@ public class SetPlayersFragment extends SwissFragment {
         ((MainActivity) getActivity()).showContinueFab();
         ((MainActivity) getActivity()).showAddFab();
 
+        loadTournamentData();
+
+        if (mTournament.getRounds().isEmpty()) {
+            mTournament.addRound();
+        }
+
         View view = inflater.inflate(R.layout.fragment_set_players, null);
-        mPlayersAdapter = new PlayerListAdapter(getContext(), mPlayers, false);
+        mPlayersAdapter = new PlayerListAdapter(getContext(), mTournament.getRound(0).getPlayers(), false);
         ListView listViewPlayers = (ListView) view.findViewById(R.id.player_list);
         listViewPlayers.setAdapter(mPlayersAdapter);
         listViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
@@ -50,35 +50,30 @@ public class SetPlayersFragment extends SwissFragment {
             }
         });
 
-        mTeams = getArguments().getStringArray(KEY_TEAMS);
-        mTournamentName = getArguments().getString(KEY_NAME);
-        mMaxTournamentRounds = getArguments().getInt(KEY_MAX_ROUNDS);
-
         //TODO just for testing
-        if (mPlayers.isEmpty()) {
-            if(mTeams == null) {
-                mPlayers.add(new Player("Adam", null, false));
-                mPlayers.add(new Player("Bob", null, false));
-                mPlayers.add(new Player("Charlie", null, false));
-                mPlayers.add(new Player("Dan", null, false));
-                mPlayers.add(new Player("Edward", null, false));
-                mPlayers.add(new Player("Frank", null, false));
-                mPlayers.add(new Player("George", null, false));
-                mPlayers.add(new Player("Henry", null, false));
-                mPlayers.add(new Player("Ira", null, false));
-                mPlayers.add(new Player("Jeremy", null, false));
-            }
-            else {
-                mPlayers.add(new Player("Adam", mTeams[0], false));
-                mPlayers.add(new Player("Bob", mTeams[0], false));
-                mPlayers.add(new Player("Charlie", mTeams[0], false));
-                mPlayers.add(new Player("Dan", mTeams[0], false));
-                mPlayers.add(new Player("Edward", mTeams[0], false));
-                mPlayers.add(new Player("Frank", mTeams[1], false));
-                mPlayers.add(new Player("George", mTeams[1], false));
-                mPlayers.add(new Player("Henry", mTeams[1], false));
-                mPlayers.add(new Player("Ira", mTeams[1], false));
-                mPlayers.add(new Player("Jeremy", mTeams[1], false));
+        if (mTournament.getRound(0).getPlayersSize() == 0) {
+            if (mTournament.getTeams() == null) {
+                mTournament.getRound(0).addPlayer(new Player("Adam", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Bob", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Charlie", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Dan", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Edward", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Frank", null, false));
+                mTournament.getRound(0).addPlayer(new Player("George", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Henry", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Ira", null, false));
+                mTournament.getRound(0).addPlayer(new Player("Jeremy", null, false));
+            } else {
+                mTournament.getRound(0).addPlayer(new Player("Adam", mTournament.getTeams().get(0), false));
+                mTournament.getRound(0).addPlayer(new Player("Bob", mTournament.getTeams().get(0), false));
+                mTournament.getRound(0).addPlayer(new Player("Charlie", mTournament.getTeams().get(0), false));
+                mTournament.getRound(0).addPlayer(new Player("Dan", mTournament.getTeams().get(0), false));
+                mTournament.getRound(0).addPlayer(new Player("Edward", mTournament.getTeams().get(0), false));
+                mTournament.getRound(0).addPlayer(new Player("Frank", mTournament.getTeams().get(1), false));
+                mTournament.getRound(0).addPlayer(new Player("George", mTournament.getTeams().get(1), false));
+                mTournament.getRound(0).addPlayer(new Player("Henry", mTournament.getTeams().get(1), false));
+                mTournament.getRound(0).addPlayer(new Player("Ira", mTournament.getTeams().get(1), false));
+                mTournament.getRound(0).addPlayer(new Player("Jeremy", mTournament.getTeams().get(1), false));
             }
         }
         return view;
@@ -91,19 +86,19 @@ public class SetPlayersFragment extends SwissFragment {
         final EditText playerNameEditText = (EditText) customView.findViewById(R.id.player_name_edit_text);
 
         final Spinner teamSpinner = (Spinner) customView.findViewById(R.id.team_spinner);
-        if (mTeams == null || mTeams.length == 0) {
+        if (mTournament.getTeams() == null || mTournament.getTeams().size() == 0) {
             teamSpinner.setVisibility(View.GONE);
         } else {
-            ArrayAdapter teamAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mTeams);
+            ArrayAdapter teamAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mTournament.getTeams());
             teamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             teamSpinner.setAdapter(teamAdapter);
         }
 
         if (playerIdx >= 0) {
-            playerNameEditText.setText(mPlayers.get(playerIdx).getName());
-            if (null != mPlayers.get(playerIdx).getTeam()) {
-                for (int i = 0; i < mTeams.length; i++) {
-                    if (mTeams[i].equals(mPlayers.get(playerIdx).getTeam())) {
+            playerNameEditText.setText(mTournament.getRound(0).getPlayer(playerIdx).getName());
+            if (null != mTournament.getRound(0).getPlayer(playerIdx).getTeam()) {
+                for (int i = 0; i < mTournament.getTeams().size(); i++) {
+                    if (mTournament.getTeams().get(i).equals(mTournament.getRound(0).getPlayer(playerIdx).getTeam())) {
                         teamSpinner.setSelection(i, false);
                         break;
                     }
@@ -129,17 +124,17 @@ public class SetPlayersFragment extends SwissFragment {
 
                         if (!newPlayerName.isEmpty()) {
                             if (playerIdx >= 0) {
-                                for (int playersIdx = 0; playersIdx < mPlayers.size(); playersIdx++) {
+                                for (int playersIdx = 0; playersIdx < mTournament.getRound(0).getPlayersSize(); playersIdx++) {
                                     if (playersIdx != playerIdx &&
-                                            mPlayers.get(playersIdx).getName().equals(newPlayerName) &&
-                                            mPlayers.get(playersIdx).getTeam().equals(newTeamName)) {
+                                            mTournament.getRound(0).getPlayer(playersIdx).getName().equals(newPlayerName) &&
+                                            mTournament.getRound(0).getPlayer(playersIdx).getTeam().equals(newTeamName)) {
                                         return; // duplicate
                                     }
                                 }
-                                mPlayers.get(playerIdx).setName(newPlayerName);
-                                mPlayers.get(playerIdx).setTeam(newTeamName);
-                            } else if (!mPlayers.contains(newPlayer)) {
-                                mPlayers.add(newPlayer);
+                                mTournament.getRound(0).getPlayer(playerIdx).setName(newPlayerName);
+                                mTournament.getRound(0).getPlayer(playerIdx).setTeam(newTeamName);
+                            } else if (!mTournament.getRound(0).containsPlayer(newPlayer)) {
+                                mTournament.getRound(0).addPlayer(newPlayer);
                             }
                         }
                         mPlayersAdapter.notifyDataSetChanged();
@@ -156,7 +151,7 @@ public class SetPlayersFragment extends SwissFragment {
             builder.setNeutralButton("Remove", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialogInterface, int i) {
-                    mPlayers.remove(playerIdx);
+                    mTournament.getRound(0).removePlayer(playerIdx);
                     mPlayersAdapter.notifyDataSetChanged();
                 }
             });
@@ -177,21 +172,16 @@ public class SetPlayersFragment extends SwissFragment {
 
         Bundle extras = new Bundle();
 
-        if (mPlayers.size() % 2 == 1) {
+        if (mTournament.getRound(0).getPlayersSize() % 2 == 1) {
             Player bye = new Player("Bye", null, true);
-            if (mPlayers.contains(bye)) {
-                mPlayers.remove(bye);
+            if (mTournament.getRound(0).containsPlayer(bye)) {
+                mTournament.getRound(0).removePlayer(bye);
             } else {
-                mPlayers.add(bye);
+                mTournament.getRound(0).addPlayer(bye);
             }
         }
-        Player playersArray[] = new Player[mPlayers.size()];
-        mPlayers.toArray(playersArray);
 
-        extras.putSerializable(KEY_PLAYERS, playersArray);
-        extras.putStringArray(KEY_TEAMS, mTeams);
-        extras.putString(KEY_NAME, mTournamentName);
-        extras.putInt(KEY_MAX_ROUNDS, mMaxTournamentRounds);
+        saveTournamentData();
         extras.putInt(KEY_ROUND, 1);
 
         firstRoundFragment.setArguments(extras);

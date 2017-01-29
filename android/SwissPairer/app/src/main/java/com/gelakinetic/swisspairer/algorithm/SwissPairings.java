@@ -2,34 +2,41 @@ package com.gelakinetic.swisspairer.algorithm;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Random;
 
 public class SwissPairings {
 
     /*************************
      * Functions for pairing *
-     *************************/
+     * ***********************
+     *
+     * @param players
+     * @param teams
+     */
 
-    public static ArrayList<Pairing> pairRoundOne(Player[] players, String[] teams) {
+    public static ArrayList<Pairing> pairRoundOne(ArrayList<Player> players, List<String> teams) {
         ArrayList<Pairing> pairings = new ArrayList<>();
 
-        shuffle(players);
+        Collections.shuffle(players);
         if (teams != null) {
-            shuffle(teams);
+            Collections.shuffle(teams);
 
             int teamIdx = 0;
             /* For all players */
-            for (int idx = 0; idx < players.length; idx++) {
+            for (int idx = 0; idx < players.size(); idx++) {
                 /* If the player's team isn't what it should be */
-                if (!players[idx].getTeam().equals(teams[teamIdx])) {
+                if (players.get(idx).getTeam() != null &&
+                        !players.get(idx).getTeam().equals(teams.get(teamIdx))) {
                     /* Look through the remaining players for a correct team */
                     boolean swapped = false;
-                    for (int searchIdx = idx + 1; searchIdx < players.length; searchIdx++) {
+                    for (int searchIdx = idx + 1; searchIdx < players.size(); searchIdx++) {
                         /* Once one is found, swap the two players */
-                        if (players[searchIdx].getTeam().equals(teams[teamIdx])) {
-                            Player tmp = players[idx];
-                            players[idx] = players[searchIdx];
-                            players[searchIdx] = tmp;
+                        if (players.get(searchIdx).getTeam() != null &&
+                                players.get(searchIdx).getTeam().equals(teams.get(teamIdx))) {
+                            Player tmp = players.get(idx);
+                            players.set(idx, players.get(searchIdx));
+                            players.set(searchIdx, tmp);
                             swapped = true;
                             break;
                         }
@@ -40,33 +47,35 @@ public class SwissPairings {
                     }
                 }
                 /* Make sure the next player is from a different team */
-                teamIdx = (teamIdx + 1) % teams.length;
+                teamIdx = (teamIdx + 1) % teams.size();
             }
 
-            Player copy[] = new Player[players.length];
-            System.arraycopy(players, 0, copy, 0, copy.length);
+            Player copy[] = new Player[players.size()];
+            for (int i = 0; i < copy.length; i++) {
+                copy[i] = players.get(i);
+            }
 
             int toPairInd = 0;
-            while (pairings.size() < players.length / 2) {
-                for (int i = 0; i < players.length; i++) {
-                    int potentialPairInd = (toPairInd + i + players.length / 2) % players.length;
+            while (pairings.size() < players.size() / 2) {
+                for (int i = 0; i < players.size(); i++) {
+                    int potentialPairInd = (toPairInd + i + players.size() / 2) % players.size();
                     if (null != copy[toPairInd] &&
                             null != copy[potentialPairInd] &&
                             copy[toPairInd].canPairAgainst(copy[potentialPairInd])) {
-                        pairings.add(new Pairing(players[toPairInd], players[potentialPairInd]));
+                        pairings.add(new Pairing(players.get(toPairInd), players.get(potentialPairInd)));
                         copy[toPairInd] = null;
                         copy[potentialPairInd] = null;
                         break;
                     }
                 }
-                toPairInd++;
+                toPairInd = (toPairInd + 1) % players.size();
             }
 
 
         } else {
             /* No teams, and players are already shuffled, so pair players across the table */
-            for (int i = 0; i < players.length / 2; i++) {
-                pairings.add(new Pairing(players[i], players[(i + players.length / 2) % players.length]));
+            for (int i = 0; i < players.size() / 2; i++) {
+                pairings.add(new Pairing(players.get(i), players.get((i + players.size() / 2) % players.size())));
             }
         }
 
@@ -83,15 +92,15 @@ public class SwissPairings {
      * @param players A list of players to pair
      * @return A list of pairings
      */
-    public static ArrayList<Pairing> pairTree(Player[] players) {
+    public static ArrayList<Pairing> pairTree(ArrayList<Player> players) {
 
 		/* Randomize the player order for pairing */
-        shuffle(players);
+        Collections.shuffle(players);
 
 		/* Make a root node for the search tree */
         ArrayList<Pairing> pairings = new ArrayList<>();
         PairingTreeNode root = new PairingTreeNode(null, null);
-        root.setNumPlayers(players.length);
+        root.setNumPlayers(players.size());
 
 		/* Recursively search for the best pairing */
         recursivelyFindPairings(root, players, pairings);
@@ -119,7 +128,7 @@ public class SwissPairings {
      * @return true if the search is over, false if it must continue
      */
     private static boolean recursivelyFindPairings(PairingTreeNode parent,
-                                                   Player[] players, ArrayList<Pairing> pairings) {
+                                                   ArrayList<Player> players, ArrayList<Pairing> pairings) {
 
 		/* Find the unpaired player with the most points */
         int maxPoints = -1;
@@ -177,8 +186,8 @@ public class SwissPairings {
             } else {
                 /* If there are more players to pair, recurse and find the pairs */
                 if (recursivelyFindPairings(child, players, pairings)) {
-					/* Add this pair to the pairings and keep exiting from
-					 * the recursion
+                    /* Add this pair to the pairings and keep exiting from
+                     * the recursion
 					 */
                     pairings.add(0, child.getPairing());
                     return true;
@@ -190,24 +199,6 @@ public class SwissPairings {
         return false;
     }
 
-    /**
-     * Rearranges an array of objects in uniformly random order
-     * (under the assumption that {@code Math.random()} generates independent
-     * and uniformly distributed numbers between 0 and 1).
-     *
-     * @param a the array to be shuffled
-     */
-    private static void shuffle(Object[] a) {
-        int n = a.length;
-        for (int i = 0; i < n; i++) {
-            /* choose index uniformly in [i, n-1] */
-            int r = i + (int) (Math.random() * (n - i));
-            Object swap = a[r];
-            a[r] = a[i];
-            a[i] = swap;
-        }
-    }
-
     /*************************
      * Functions for testing *
      *************************/
@@ -217,7 +208,7 @@ public class SwissPairings {
      *
      * @param pairings The pairings to simulate a round for
      */
-    public static void randomlyAssignWinners(ArrayList<Pairing> pairings) {
+    public static void randomlyAssignWinners(List<Pairing> pairings) {
         Random rand = new Random();
         for (Pairing pairing : pairings) {
 

@@ -5,7 +5,6 @@ import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,12 +19,9 @@ import com.gelakinetic.swisspairer.MainActivity;
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PairingListAdapter;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
-import com.gelakinetic.swisspairer.algorithm.Pairing;
-import com.gelakinetic.swisspairer.algorithm.Player;
 import com.gelakinetic.swisspairer.algorithm.SwissPairings;
 
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
 
 /**
  * Created by Adam on 1/27/2017.
@@ -33,61 +29,50 @@ import java.util.Arrays;
 
 public class RoundFragment extends SwissFragment {
 
-    private int mRound;
-    private Player mPlayers[];
-    private ArrayList<Pairing> mPairings = new ArrayList<>();
     private PlayerListAdapter mStandingsAdapter;
     private PairingListAdapter mPairingsAdapter;
     private ListView mPairingsListView;
     private ScrollView mScrollView;
-    private boolean mPairingsCalculated = false;
-    private int mMaxRounds;
-    private String[] mTeams;
-    private String mTournamentName;
+
+    private int mRound;
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        ((MainActivity) getActivity()).showContinueFab();
+        ((MainActivity) getActivity()).hideContinueFab();
         ((MainActivity) getActivity()).hideAddFab();
+
+        loadTournamentData();
+        mRound = getArguments().getInt(KEY_ROUND);
+
+        if (mTournament.getRounds().size() == mRound) {
+            mTournament.addRound();
+        }
 
         View v = inflater.inflate(R.layout.fragment_round, null);
 
         /* Get a reference to the scroll view */
         mScrollView = (ScrollView) v.findViewById(R.id.scroll_view);
 
-        /* Make a local copy of the player objects */
-        Player lastRound[] = (Player[]) getArguments().getSerializable(KEY_PLAYERS);
-        mPlayers = new Player[lastRound.length];
-        for (int i = 0; i < lastRound.length; i++) {
-            mPlayers[i] = new Player(lastRound[i]);
-        }
-
-        /* Grab the teams and tournament name */
-        mTeams = getArguments().getStringArray(KEY_TEAMS);
-        mTournamentName = getArguments().getString(KEY_NAME);
-
-        /* Figure out how many rounds there are, what round this is, and display it */
-        mMaxRounds = getArguments().getInt(KEY_MAX_ROUNDS);
-        mRound = getArguments().getInt(KEY_ROUND);
-
         /* Set up the standings list */
         ListView standingsListView = (ListView) v.findViewById(R.id.standings_list_view);
-        mStandingsAdapter = new PlayerListAdapter(getContext(), mPlayers, true);
+        mStandingsAdapter = new PlayerListAdapter(getContext(), mTournament.getRound(mRound).getPlayers(), true);
         standingsListView.setAdapter(mStandingsAdapter);
         ListUtils.setDynamicHeight(standingsListView);
 
-        if (mRound > mMaxRounds) {
+        if (mRound > mTournament.getMaxRounds()) {
             ((MainActivity) getActivity()).hideContinueFab();
             ((TextView) v.findViewById(R.id.round_title)).setText("Final Results");
             v.findViewById(R.id.pairings_list_view).setVisibility(View.GONE);
             v.findViewById(R.id.pairings_title).setVisibility(View.GONE);
+            Collections.sort(mTournament.getRound(mRound).getPlayers());
+            mStandingsAdapter.notifyDataSetChanged();
         } else {
             ((TextView) v.findViewById(R.id.round_title)).setText("Round " + mRound);
             /* Set up the pairings list */
             mPairingsListView = (ListView) v.findViewById(R.id.pairings_list_view);
-            mPairingsAdapter = new PairingListAdapter(getContext(), mPairings);
+            mPairingsAdapter = new PairingListAdapter(getContext(), mTournament.getRound(mRound).getPairings());
             mPairingsListView.setAdapter(mPairingsAdapter);
             mPairingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
                 @Override
@@ -98,8 +83,7 @@ public class RoundFragment extends SwissFragment {
             ListUtils.setDynamicHeight(mPairingsListView);
 
             /* If there aren't pairings already, make pairings */
-            if (!mPairingsCalculated) {
-                mPairingsCalculated = true;
+            if (mTournament.getRound(mRound).getPairings().isEmpty()) {
                 // TODO progress spinner ?
                 /* Find the pairings in the background */
                 new AsyncTask<Void, Void, Void>() {
@@ -107,12 +91,12 @@ public class RoundFragment extends SwissFragment {
                     protected Void doInBackground(Void... voids) {
                         if (mRound == 1) {
                             /* This both sorts the players and adds the pairings */
-                            mPairings.addAll(SwissPairings.pairRoundOne(mPlayers, mTeams));
+                            mTournament.getRound(mRound).addPairings(SwissPairings.pairRoundOne(mTournament.getRound(mRound).getPlayers(), mTournament.getTeams()));
                         } else {
                             /* Find the pairings */
-                            mPairings.addAll(SwissPairings.pairTree(mPlayers));
+                            mTournament.getRound(mRound).addPairings(SwissPairings.pairTree(mTournament.getRound(mRound).getPlayers()));
                             /* Sort the players for the standings */
-                            Arrays.sort(mPlayers);
+                            Collections.sort(mTournament.getRound(mRound).getPlayers());
                         }
                         return null;
                     }
@@ -126,6 +110,15 @@ public class RoundFragment extends SwissFragment {
                         mScrollView.fullScroll(ScrollView.FOCUS_UP);
                     }
                 }.execute();
+            } else {
+                mStandingsAdapter.notifyDataSetChanged();
+                mPairingsAdapter.notifyDataSetChanged();
+                ListUtils.setDynamicHeight(mPairingsListView);
+                mScrollView.fullScroll(ScrollView.FOCUS_UP);
+
+                if(mTournament.getRound(mRound).allMatchesReported()) {
+                    ((MainActivity) getActivity()).showContinueFab();
+                }
             }
         }
         return v;
@@ -134,33 +127,35 @@ public class RoundFragment extends SwissFragment {
     @Override
     public void onContinueFabClick(View view) {
 
+        /* Now that all matches are reported, commit them to the player objects before starting
+         * the next fragment
+         */
+        mTournament.getRound(mRound).commitAllPairings();
+
         // TODO just for testing
         // TODO problematic, when going backwards to a round, the results are retroactively shown
         // TODO solution, pass W/L/T as a separate object, don't modify Player objects
-        SwissPairings.randomlyAssignWinners(mPairings);
+        //SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
 
         // Create a new Fragment to be placed in the activity layout
-        RoundFragment firstFragment = new RoundFragment();
+        RoundFragment nextRoundFragment = new RoundFragment();
 
         // In case this activity was started with special instructions from an
         // Intent, pass the Intent's extras to the fragment as arguments
         // firstFragment.setArguments(getIntent().getExtras());
 
         Bundle extras = new Bundle();
-        extras.putSerializable(KEY_PLAYERS, mPlayers);
         extras.putInt(KEY_ROUND, mRound + 1);
 
-        extras.putStringArray(KEY_TEAMS, mTeams);
-        extras.putString(KEY_NAME, mTournamentName);
-        extras.putInt(KEY_MAX_ROUNDS, mMaxRounds);
+        saveTournamentData();
 
-        firstFragment.setArguments(extras);
+        nextRoundFragment.setArguments(extras);
 
         // Add the fragment to the 'fragment_container' FrameLayout
         getFragmentManager()
                 .beginTransaction()
                 .addToBackStack(null)
-                .replace(R.id.fragment_container, firstFragment)
+                .replace(R.id.fragment_container, nextRoundFragment)
                 .commit();
     }
 
@@ -190,29 +185,42 @@ public class RoundFragment extends SwissFragment {
         }
     }
 
-    // TODO edit team rather than make a new one
     private void showMatchResultDialog(final int pairingIdx) {
 
         View customView = getLayoutInflater(null).inflate(R.layout.dialog_report_match, null);
 
-        ((TextView) customView.findViewById(R.id.player_one_name)).setText(mPairings.get(pairingIdx).getPlayerOne().getName());
-        ((TextView) customView.findViewById(R.id.player_two_name)).setText(mPairings.get(pairingIdx).getPlayerTwo().getName());
+        ((TextView) customView.findViewById(R.id.player_one_name)).setText(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOne().getName());
+        ((TextView) customView.findViewById(R.id.player_two_name)).setText(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwo().getName());
 
         final Spinner playerOneSpinner = ((Spinner) customView.findViewById(R.id.player_one_wins_spinner));
         final Spinner playerTwoSpinner = ((Spinner) customView.findViewById(R.id.player_two_wins_spinner));
         final Spinner drawsSpinner = ((Spinner) customView.findViewById(R.id.draws_spinner));
 
+        playerOneSpinner.setSelection(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOneWins());
+        playerTwoSpinner.setSelection(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwoWins());
+        drawsSpinner.setSelection(mTournament.getRound(mRound).getPairing(pairingIdx).getDraws());
+
         AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
 
-        builder.setTitle(mPairings.get(pairingIdx).getPairingString())
+        builder.setTitle(mTournament.getRound(mRound).getPairing(pairingIdx).getPairingString())
                 .setPositiveButton("OK", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        int playerOneWins = Integer.parseInt((String)playerOneSpinner.getSelectedItem());
-                        int playerTwoWins = Integer.parseInt((String)playerTwoSpinner.getSelectedItem());
-                        int draws = Integer.parseInt((String)drawsSpinner.getSelectedItem());
+                        int playerOneWins = Integer.parseInt((String) playerOneSpinner.getSelectedItem());
+                        int playerTwoWins = Integer.parseInt((String) playerTwoSpinner.getSelectedItem());
+                        int draws = Integer.parseInt((String) drawsSpinner.getSelectedItem());
 
-                        Log.v("RES", playerOneWins + "/" + draws + "/" + playerTwoWins);
+                        mTournament.getRound(mRound).getPairing(pairingIdx).reportMatch(playerOneWins, playerTwoWins, draws);
+
+                        if (mTournament.getRound(mRound).allMatchesReported()) {
+                            ((MainActivity) getActivity()).showContinueFab();
+                        } else {
+                            ((MainActivity) getActivity()).hideContinueFab();
+                        }
+
+                        saveTournamentData();
+
+                        mPairingsAdapter.notifyDataSetChanged();
                     }
                 })
                 .setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
