@@ -5,6 +5,8 @@ import android.view.View;
 import android.widget.Button;
 
 import com.gelakinetic.swisspairer.R;
+import com.gelakinetic.swisspairer.algorithm.Pairing;
+import com.gelakinetic.swisspairer.algorithm.Round;
 import com.gelakinetic.swisspairer.algorithm.Tournament;
 import com.google.gson.Gson;
 
@@ -60,6 +62,20 @@ public abstract class SwissFragment extends Fragment {
             FileReader reader = new FileReader(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
             mTournament = (new Gson()).fromJson(reader, Tournament.class);
             reader.close();
+
+            /* For each round, replace the separate player objects in the players ArrayList with
+             * references to the player objects in the pairings
+             */
+            for (Round round : mTournament.getRounds()) {
+                if(!round.getPairings().isEmpty()) {
+                    round.getPlayers().clear();
+                    for (Pairing pairing : round.getPairings()) {
+                        round.addPlayer(pairing.getPlayerOne());
+                        round.addPlayer(pairing.getPlayerTwo());
+                    }
+                }
+            }
+
         } catch (IOException e) {
             e.printStackTrace();
         }
