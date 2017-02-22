@@ -33,6 +33,7 @@ public class RoundFragment extends SwissFragment {
     private PairingListAdapter mPairingsAdapter;
     private ListView mPairingsListView;
     private ScrollView mScrollView;
+    private ListView mStandingsListView;
 
     private int mRound;
 
@@ -87,12 +88,7 @@ public class RoundFragment extends SwissFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mTournamentFilename = getArguments().getString(KEY_JSON_FILENAME);
-        loadTournamentData(mTournamentFilename);
         mRound = getArguments().getInt(KEY_ROUND);
-
-        if (mTournament.getRounds().size() == mRound) {
-            mTournament.addRound();
-        }
 
         View v = inflater.inflate(R.layout.fragment_round, container, false);
 
@@ -104,12 +100,28 @@ public class RoundFragment extends SwissFragment {
         mScrollView = (ScrollView) v.findViewById(R.id.scroll_view);
 
         /* Set up the standings list */
-        ListView standingsListView = (ListView) v.findViewById(R.id.standings_list_view);
+        mStandingsListView = (ListView) v.findViewById(R.id.standings_list_view);
+
+        return v;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        View v = getView();
+
+        loadTournamentData(mTournamentFilename);
+        if (mTournament.getRounds().size() == mRound) {
+            mTournament.addRound();
+        }
+
         mStandingsAdapter = new PlayerListAdapter(getContext(), mTournament.getRound(mRound).getPlayers(), true);
-        standingsListView.setAdapter(mStandingsAdapter);
-        ListUtils.setDynamicHeight(standingsListView);
+        mStandingsListView.setAdapter(mStandingsAdapter);
+        ListUtils.setDynamicHeight(mStandingsListView);
 
         if (mRound > mTournament.getMaxRounds()) {
+            /* This is the tournament results */
             setRightButtonVisibility(View.GONE);
             ((TextView) v.findViewById(R.id.round_title)).setText(R.string.final_results);
             v.findViewById(R.id.pairings_list_view).setVisibility(View.GONE);
@@ -117,6 +129,7 @@ public class RoundFragment extends SwissFragment {
             Collections.sort(mTournament.getRound(mRound).getPlayers());
             mStandingsAdapter.notifyDataSetChanged();
         } else {
+            /* This is a regular round */
             ((TextView) v.findViewById(R.id.round_title)).setText(String.format(Locale.getDefault(), getString(R.string.round), mRound));
             /* Set up the pairings list */
             mPairingsListView = (ListView) v.findViewById(R.id.pairings_list_view);
@@ -156,6 +169,8 @@ public class RoundFragment extends SwissFragment {
                         mPairingsAdapter.notifyDataSetChanged();
                         ListUtils.setDynamicHeight(mPairingsListView);
                         mScrollView.fullScroll(ScrollView.FOCUS_UP);
+                        /* Save the pairings */
+                        saveTournamentData(mTournamentFilename);
 
 //                        //TODO just for testing
 //                        SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
@@ -177,8 +192,6 @@ public class RoundFragment extends SwissFragment {
 
             }
         }
-
-        return v;
     }
 
     /**

@@ -25,6 +25,7 @@ import com.gelakinetic.swisspairer.algorithm.Player;
 public class SetPlayersFragment extends SwissFragment {
 
     private PlayerListAdapter mPlayersAdapter;
+    private ListView mListViewPlayers;
 
 
     private final View.OnClickListener continueListener = new View.OnClickListener() {
@@ -98,11 +99,6 @@ public class SetPlayersFragment extends SwissFragment {
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         mTournamentFilename = getArguments().getString(KEY_JSON_FILENAME);
-        loadTournamentData(mTournamentFilename);
-
-        if (mTournament.getRounds().isEmpty()) {
-            mTournament.addRound();
-        }
 
         View view = inflater.inflate(R.layout.fragment_set_players, container, false);
 
@@ -110,10 +106,8 @@ public class SetPlayersFragment extends SwissFragment {
         setRightButtonVisibility(View.VISIBLE);
         setLeftButtonVisibility(View.VISIBLE);
 
-        mPlayersAdapter = new PlayerListAdapter(getContext(), mTournament.getRound(0).getPlayers(), false);
-        ListView listViewPlayers = (ListView) view.findViewById(R.id.player_list);
-        listViewPlayers.setAdapter(mPlayersAdapter);
-        listViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+        mListViewPlayers = (ListView) view.findViewById(R.id.player_list);
+        mListViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
                 showAddPlayerDialog(i);
@@ -147,6 +141,20 @@ public class SetPlayersFragment extends SwissFragment {
 //            }
 //        }
         return view;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+
+        loadTournamentData(mTournamentFilename);
+
+        if (mTournament.getRounds().isEmpty()) {
+            mTournament.addRound();
+        }
+
+        mPlayersAdapter = new PlayerListAdapter(getContext(), mTournament.getRound(0).getPlayers(), false);
+        mListViewPlayers.setAdapter(mPlayersAdapter);
     }
 
     /**
@@ -213,6 +221,8 @@ public class SetPlayersFragment extends SwissFragment {
                             }
                         }
                         mPlayersAdapter.notifyDataSetChanged();
+
+                        saveTournamentData(mTournamentFilename);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -228,6 +238,7 @@ public class SetPlayersFragment extends SwissFragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mTournament.getRound(0).removePlayer(playerIdx);
                     mPlayersAdapter.notifyDataSetChanged();
+                    saveTournamentData(mTournamentFilename);
                 }
             });
         }

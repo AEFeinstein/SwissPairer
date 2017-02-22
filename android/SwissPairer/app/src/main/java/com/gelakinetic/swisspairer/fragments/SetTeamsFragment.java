@@ -150,6 +150,12 @@ public class SetTeamsFragment extends SwissFragment {
         return view;
     }
 
+    @Override
+    public void onResume() {
+        super.onResume();
+        setTournament(mTournamentFilename);
+    }
+
     /**
      * TODO document
      *
@@ -187,6 +193,7 @@ public class SetTeamsFragment extends SwissFragment {
                             }
                         }
                         mTeamsAdapter.notifyDataSetChanged();
+                        saveTournamentData(mTournamentFilename);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -202,6 +209,7 @@ public class SetTeamsFragment extends SwissFragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mTournament.getTeams().remove(teamIdx);
                     mTeamsAdapter.notifyDataSetChanged();
+                    saveTournamentData(mTournamentFilename);
                 }
             });
         }
@@ -258,19 +266,7 @@ public class SetTeamsFragment extends SwissFragment {
                 .setItems(filenames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mTournamentFilename = filenames[i];
-                        loadTournamentData(mTournamentFilename);
-
-                        mTournamentName.setText(mTournament.getName());
-                        mRoundSpinner.setSelection(mTournament.getMaxRounds() - 1);
-                        if (mTournament.getTeams().isEmpty()) {
-                            mTeamCheckbox.setChecked(false);
-                        } else {
-                            mTeamCheckbox.setChecked(true);
-                        }
-                        mTeamsAdapter = new TeamListAdapter(getContext(), mTournament.getTeams());
-                        mListViewTeams.setAdapter(mTeamsAdapter);
-                        mTeamsAdapter.notifyDataSetChanged();
+                        setTournament(filenames[i]);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -280,6 +276,22 @@ public class SetTeamsFragment extends SwissFragment {
                     }
                 })
                 .show();
+    }
+
+    private void setTournament(String filename) {
+        mTournamentFilename = filename;
+        loadTournamentData(mTournamentFilename);
+
+        mTournamentName.setText(mTournament.getName());
+        mRoundSpinner.setSelection(mTournament.getMaxRounds() - 1);
+        if (mTournament.getTeams().isEmpty()) {
+            mTeamCheckbox.setChecked(false);
+        } else {
+            mTeamCheckbox.setChecked(true);
+        }
+        mTeamsAdapter = new TeamListAdapter(getContext(), mTournament.getTeams());
+        mListViewTeams.setAdapter(mTeamsAdapter);
+        mTeamsAdapter.notifyDataSetChanged();
     }
 
     /**
@@ -298,8 +310,7 @@ public class SetTeamsFragment extends SwissFragment {
                 .setItems(filenames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        mTournamentFilename = filenames[i];
-                        deleteTournamentData(mTournamentFilename);
+                        deleteTournamentData(filenames[i]);
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
