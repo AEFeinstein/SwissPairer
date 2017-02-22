@@ -65,7 +65,7 @@ public class SetTeamsFragment extends SwissFragment {
             mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
             mTournament.setDate(System.currentTimeMillis());
             mTournamentFilename = tName;
-            saveTournamentData(mTournamentFilename);
+            saveTournamentData(mTournamentFilename); // Created a Tournament
 
             Bundle extras = new Bundle();
             extras.putString(KEY_JSON_FILENAME, mTournamentFilename);
@@ -193,7 +193,10 @@ public class SetTeamsFragment extends SwissFragment {
                             }
                         }
                         mTeamsAdapter.notifyDataSetChanged();
-                        saveTournamentData(mTournamentFilename);
+
+                        /* Clear out player data & save the tournament */
+                        mTournament.getRounds().clear();
+                        saveTournamentData(mTournamentFilename); // Team Added
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -209,7 +212,10 @@ public class SetTeamsFragment extends SwissFragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mTournament.getTeams().remove(teamIdx);
                     mTeamsAdapter.notifyDataSetChanged();
-                    saveTournamentData(mTournamentFilename);
+
+                    /* Clear out player data & save the tournament */
+                    mTournament.getRounds().clear();
+                    saveTournamentData(mTournamentFilename); // Team Removed
                 }
             });
         }
@@ -280,7 +286,9 @@ public class SetTeamsFragment extends SwissFragment {
 
     private void setTournament(String filename) {
         mTournamentFilename = filename;
-        loadTournamentData(mTournamentFilename);
+        if(mTournamentFilename != null) {
+            loadTournamentData(mTournamentFilename);
+        }
 
         mTournamentName.setText(mTournament.getName());
         mRoundSpinner.setSelection(mTournament.getMaxRounds() - 1);

@@ -4,6 +4,7 @@ import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
+import android.support.v4.os.AsyncTaskCompat;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -46,10 +47,11 @@ public class RoundFragment extends SwissFragment {
         @Override
         public void onClick(View view) {
 
-        /* Now that all matches are reported, commit them to the player objects before starting
-         * the next fragment
-         */
+            /* Now that all matches are reported, commit them to the player objects before starting
+             * the next fragment
+             */
             mTournament.getRound(mRound).commitAllPairings();
+            saveTournamentData(mTournamentFilename); // Commit Pairings, Moving to next round
 
             // Create a new Fragment to be placed in the activity layout
             RoundFragment nextRoundFragment = new RoundFragment();
@@ -61,8 +63,6 @@ public class RoundFragment extends SwissFragment {
             Bundle extras = new Bundle();
             extras.putInt(KEY_ROUND, mRound + 1);
             extras.putString(KEY_JSON_FILENAME, mTournamentFilename);
-
-            saveTournamentData(mTournamentFilename);
 
             nextRoundFragment.setArguments(extras);
 
@@ -147,9 +147,10 @@ public class RoundFragment extends SwissFragment {
             if (mTournament.getRound(mRound).getPairings().isEmpty()) {
                 // Maybe add a progressBar while the pairings are being paired?
                 /* Find the pairings in the background */
-                new AsyncTask<Void, Void, Void>() {
+                AsyncTask pairingTask = new AsyncTask<Object, Void, Void>() {
+
                     @Override
-                    protected Void doInBackground(Void... voids) {
+                    protected Void doInBackground(Object... voids) {
                         if (mRound == 1) {
                             /* This both sorts the players and adds the pairings */
                             mTournament.getRound(mRound).addPairings(SwissPairings.pairRoundOne(mTournament.getRound(mRound).getPlayers(), mTournament.getTeams()));
@@ -159,6 +160,10 @@ public class RoundFragment extends SwissFragment {
                             /* Sort the players for the standings */
                             Collections.sort(mTournament.getRound(mRound).getPlayers());
                         }
+
+                        /* Save the pairings */
+                        saveTournamentData(mTournamentFilename); // Pairings Created
+
                         return null;
                     }
 
@@ -169,20 +174,18 @@ public class RoundFragment extends SwissFragment {
                         mPairingsAdapter.notifyDataSetChanged();
                         ListUtils.setDynamicHeight(mPairingsListView);
                         mScrollView.fullScroll(ScrollView.FOCUS_UP);
-                        /* Save the pairings */
-                        saveTournamentData(mTournamentFilename);
 
 //                        //TODO just for testing
 //                        SwissPairings.randomlyAssignWinners(mTournament.getRound(mRound).getPairings());
 //                        mPairingsAdapter.notifyDataSetChanged();
 //                        setRightButtonVisibility(View.VISIBLE);
                     }
-                }.execute();
+                };
+                AsyncTaskCompat.executeParallel(pairingTask);
             } else {
                 if (mTournament.getRound(mRound).allMatchesReported()) {
                     mTournament.getRound(mRound).uncommitAllPairings(mTournament.getRound(mRound).getPlayers());
-
-                    saveTournamentData(mTournamentFilename);
+                    saveTournamentData(mTournamentFilename); // Uncommit Pairings
                     setRightButtonVisibility(View.VISIBLE);
                 }
                 mStandingsAdapter.notifyDataSetChanged();
@@ -251,7 +254,7 @@ public class RoundFragment extends SwissFragment {
                         }
 
                         /* Save the tournament data */
-                        saveTournamentData(mTournamentFilename);
+                        saveTournamentData(mTournamentFilename); // Match Reported
 
                         /* Update the UI */
                         mPairingsAdapter.notifyDataSetChanged();

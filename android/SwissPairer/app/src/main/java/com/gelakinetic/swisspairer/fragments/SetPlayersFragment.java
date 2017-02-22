@@ -60,7 +60,7 @@ public class SetPlayersFragment extends SwissFragment {
                 }
             }
 
-            saveTournamentData(mTournamentFilename);
+            saveTournamentData(mTournamentFilename); // Starting the tournament (bye added/removed)
             extras.putInt(KEY_ROUND, 1);
             extras.putString(KEY_JSON_FILENAME, mTournamentFilename);
 
@@ -222,7 +222,11 @@ public class SetPlayersFragment extends SwissFragment {
                         }
                         mPlayersAdapter.notifyDataSetChanged();
 
-                        saveTournamentData(mTournamentFilename);
+                        /* If player data changed, clear the rounds and save the tournament */
+                        while(mTournament.getRounds().size() > 1) {
+                            mTournament.getRounds().remove(1);
+                        }
+                        saveTournamentData(mTournamentFilename); // Player Added
                     }
                 })
                 .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
@@ -238,7 +242,12 @@ public class SetPlayersFragment extends SwissFragment {
                 public void onClick(DialogInterface dialogInterface, int i) {
                     mTournament.getRound(0).removePlayer(playerIdx);
                     mPlayersAdapter.notifyDataSetChanged();
-                    saveTournamentData(mTournamentFilename);
+
+                    /* If player data changed, clear the rounds and save the tournament */
+                    while(mTournament.getRounds().size() > 1) {
+                        mTournament.getRounds().remove(1);
+                    }
+                    saveTournamentData(mTournamentFilename); // Player Removed
                 }
             });
         }
