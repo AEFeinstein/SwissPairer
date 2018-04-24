@@ -7,9 +7,9 @@ import java.util.Random;
 
 public class SwissPairings {
 
-    /*************************
-     * Functions for pairing *
-     * ***********************/
+    ///////////////////////////
+    // Functions for pairing //
+    ///////////////////////////
 
     /**
      * TODO document
@@ -201,15 +201,16 @@ public class SwissPairings {
         return false;
     }
 
-    /*************************
-     * Functions for testing *
-     *************************/
+    ///////////////////////////
+    // Functions for testing //
+    ///////////////////////////
 
     /**
      * This simulates a round where each pairing is assigned either a winner/loser, or a draw
      *
      * @param pairings The pairings to simulate a round for
      */
+    @SuppressWarnings("unused")
     public static void randomlyAssignWinners(List<Pairing> pairings) {
         Random rand = new Random();
         for (Pairing pairing : pairings) {

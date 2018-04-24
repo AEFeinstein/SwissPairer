@@ -1,7 +1,9 @@
 package com.gelakinetic.swisspairer.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -20,6 +22,8 @@ import android.widget.Toast;
 
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.TeamListAdapter;
+
+import java.util.Objects;
 
 /**
  * Created by Adam on 1/27/2017.
@@ -63,7 +67,6 @@ public class SetTeamsFragment extends SwissFragment {
             }
 
             mTournament.setMaxRounds(Integer.parseInt((String) mRoundSpinner.getSelectedItem()));
-            mTournament.setDate(System.currentTimeMillis());
             mTournamentFilename = tName;
             saveTournamentData(mTournamentFilename); // Created a Tournament
 
@@ -72,7 +75,7 @@ public class SetTeamsFragment extends SwissFragment {
             setPlayersFragment.setArguments(extras);
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            getFragmentManager()
+            Objects.requireNonNull(getFragmentManager())
                     .beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.fragment_container, setPlayersFragment)
@@ -101,7 +104,7 @@ public class SetTeamsFragment extends SwissFragment {
      */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
         View view = inflater.inflate(R.layout.fragment_set_teams, container, false);
 
@@ -109,9 +112,9 @@ public class SetTeamsFragment extends SwissFragment {
         setRightButtonVisibility(View.VISIBLE);
         setLeftButtonVisibility(View.GONE);
 
-        mTournamentName = (EditText) view.findViewById(R.id.tournament_name);
+        mTournamentName = view.findViewById(R.id.tournament_name);
 
-        mTeamCheckbox = (CheckBox) view.findViewById(R.id.team_checkbox);
+        mTeamCheckbox = view.findViewById(R.id.team_checkbox);
         mTeamCheckbox.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
@@ -125,7 +128,7 @@ public class SetTeamsFragment extends SwissFragment {
             }
         });
         mTeamsAdapter = new TeamListAdapter(getContext(), mTournament.getTeams());
-        mListViewTeams = (ListView) view.findViewById(R.id.team_list);
+        mListViewTeams = view.findViewById(R.id.team_list);
         mListViewTeams.setAdapter(mTeamsAdapter);
         mListViewTeams.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
@@ -134,7 +137,7 @@ public class SetTeamsFragment extends SwissFragment {
             }
         });
 
-        mRoundSpinner = (Spinner) view.findViewById(R.id.num_round_spinner);
+        mRoundSpinner = view.findViewById(R.id.num_round_spinner);
 
 //        //just for testing
 //        mTournamentName.setText("Test Tournament");
@@ -163,9 +166,9 @@ public class SetTeamsFragment extends SwissFragment {
      */
     private void showAddTeamDialog(final int teamIdx) {
 
-        View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_team, null, false);
+        View customView = ((LayoutInflater) (Objects.requireNonNull(Objects.requireNonNull(getContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE)))).inflate(R.layout.dialog_add_team, null, false);
 
-        final EditText teamNameEditText = (EditText) customView.findViewById(R.id.team_name_edit_text);
+        final EditText teamNameEditText = customView.findViewById(R.id.team_name_edit_text);
 
         if (teamIdx >= 0) {
             teamNameEditText.setText(mTournament.getTeams().get(teamIdx));
@@ -268,7 +271,7 @@ public class SetTeamsFragment extends SwissFragment {
             return;
         }
 
-        (new AlertDialog.Builder(getContext())).setTitle(R.string.load_tournament_title)
+        (new AlertDialog.Builder(Objects.requireNonNull(getContext()))).setTitle(R.string.load_tournament_title)
                 .setItems(filenames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
@@ -314,7 +317,7 @@ public class SetTeamsFragment extends SwissFragment {
             return;
         }
 
-        (new AlertDialog.Builder(getContext())).setTitle(R.string.delete_tournament_title)
+        (new AlertDialog.Builder(Objects.requireNonNull(getContext()))).setTitle(R.string.delete_tournament_title)
                 .setItems(filenames, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {

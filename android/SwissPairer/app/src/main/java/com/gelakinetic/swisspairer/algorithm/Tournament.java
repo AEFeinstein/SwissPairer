@@ -9,7 +9,6 @@ import java.util.List;
 
 public class Tournament {
     private String mName;
-    private long mDate;
     private int mMaxRounds;
     private final ArrayList<String> mTeams = new ArrayList<>();
     private final ArrayList<Round> mRounds = new ArrayList<>();
@@ -39,15 +38,6 @@ public class Tournament {
      */
     public void setMaxRounds(int maxRounds) {
         this.mMaxRounds = maxRounds;
-    }
-
-    /**
-     * TODO document
-     *
-     * @param date
-     */
-    public void setDate(long date) {
-        this.mDate = date;
     }
 
     /**

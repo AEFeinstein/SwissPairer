@@ -66,7 +66,7 @@ public class PlayerListAdapter extends ArrayAdapter<Player> {
         /* Lookup view for data population */
         if (player.getTeam() != null) {
             convertView.findViewById(R.id.player_team).setVisibility(View.VISIBLE);
-            ((TextView) convertView.findViewById(R.id.player_team)).setText("[" + player.getTeam() + "]");
+            ((TextView) convertView.findViewById(R.id.player_team)).setText(String.format("[%s]", player.getTeam()));
         } else {
             convertView.findViewById(R.id.player_team).setVisibility(View.GONE);
         }

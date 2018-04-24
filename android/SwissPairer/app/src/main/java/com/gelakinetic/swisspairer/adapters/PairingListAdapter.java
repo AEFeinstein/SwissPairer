@@ -53,8 +53,8 @@ public class PairingListAdapter extends ArrayAdapter<Pairing> {
         }
 
         /* Lookup view for data population */
-        TextView playerOneLabel = ((TextView) convertView.findViewById(R.id.player_left));
-        TextView playerTwoLabel = ((TextView) convertView.findViewById(R.id.player_right));
+        TextView playerOneLabel = convertView.findViewById(R.id.player_left);
+        TextView playerTwoLabel = convertView.findViewById(R.id.player_right);
         playerOneLabel.setText(pairing.getPlayerOne().getPairingString());
         playerTwoLabel.setText(pairing.getPlayerTwo().getPairingString());
 

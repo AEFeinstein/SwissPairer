@@ -1,7 +1,9 @@
 package com.gelakinetic.swisspairer.fragments;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
+import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AlertDialog;
 import android.view.LayoutInflater;
@@ -17,6 +19,8 @@ import android.widget.Toast;
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
 import com.gelakinetic.swisspairer.algorithm.Player;
+
+import java.util.Objects;
 
 /**
  * Created by Adam on 1/27/2017.
@@ -67,7 +71,7 @@ public class SetPlayersFragment extends SwissFragment {
             firstRoundFragment.setArguments(extras);
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            getFragmentManager()
+            Objects.requireNonNull(getFragmentManager())
                     .beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.fragment_container, firstRoundFragment)
@@ -96,9 +100,9 @@ public class SetPlayersFragment extends SwissFragment {
      */
     @Nullable
     @Override
-    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+    public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mTournamentFilename = getArguments().getString(KEY_JSON_FILENAME);
+        mTournamentFilename = Objects.requireNonNull(getArguments()).getString(KEY_JSON_FILENAME);
 
         View view = inflater.inflate(R.layout.fragment_set_players, container, false);
 
@@ -106,7 +110,7 @@ public class SetPlayersFragment extends SwissFragment {
         setRightButtonVisibility(View.VISIBLE);
         setLeftButtonVisibility(View.VISIBLE);
 
-        mListViewPlayers = (ListView) view.findViewById(R.id.player_list);
+        mListViewPlayers = view.findViewById(R.id.player_list);
         mListViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
@@ -164,11 +168,11 @@ public class SetPlayersFragment extends SwissFragment {
      */
     private void showAddPlayerDialog(final int playerIdx) {
 
-        View customView = getLayoutInflater(null).inflate(R.layout.dialog_add_player, null, false);
+        View customView = ((LayoutInflater) (Objects.requireNonNull(Objects.requireNonNull(getContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE)))).inflate(R.layout.dialog_add_player, null, false);
 
-        final EditText playerNameEditText = (EditText) customView.findViewById(R.id.player_name_edit_text);
+        final EditText playerNameEditText = customView.findViewById(R.id.player_name_edit_text);
 
-        final Spinner teamSpinner = (Spinner) customView.findViewById(R.id.team_spinner);
+        final Spinner teamSpinner = customView.findViewById(R.id.team_spinner);
         if (mTournament.getTeams() == null || mTournament.getTeams().size() == 0) {
             customView.findViewById(R.id.team_entry).setVisibility(View.GONE);
         } else {

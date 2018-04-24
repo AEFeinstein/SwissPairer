@@ -197,13 +197,8 @@ public class Player implements Comparable<Player>, Serializable {
         }
 
         String thatTeam = ((Player) obj).getTeam();
-        if ((thatTeam == null && getTeam() == null) ||
-                thatTeam != null && thatTeam.equals(getTeam())) {
-            if (((Player) obj).getName().equals(getName())) {
-                return true;
-            }
-        }
-        return false;
+        return ((thatTeam == null && getTeam() == null) || thatTeam != null && thatTeam.equals(getTeam())) &&
+                ((Player) obj).getName().equals(getName());
     }
 
     /**

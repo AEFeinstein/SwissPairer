@@ -14,7 +14,7 @@
     <string name="delete_tournament_title">Delete Tournament</string>
     <string name="no_tournaments">No Saved Tournaments</string>
     <string name="tournament_no_name">Tournament needs a name</string>
-    <string name="vs" formatted="false">%s vs. %s</string>
+    <string name="vs" formatted="true">%1$s vs. %2$s</string>
     <string name="final_results">Final Results</string>
     <string name="round">Round %d</string>
     <string name="bye">Bye</string>
@@ -24,7 +24,6 @@
     <string name="pairings">Pairings</string>
     <string name="num_rounds">Number of Rounds?</string>
     <string name="team_event">Team Event?</string>
-    <string name="teams">Teams</string>
     <string name="player_name">Player Name</string>
     <string name="team_name">Team Name</string>
     <string name="tournament_name">Tournament Name</string>

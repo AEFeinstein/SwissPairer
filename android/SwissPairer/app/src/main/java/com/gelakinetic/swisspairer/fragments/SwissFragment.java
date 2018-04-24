@@ -15,6 +15,7 @@ import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Objects;
 
 /**
  * Created by Adam on 1/27/2017.
@@ -41,7 +42,7 @@ public abstract class SwissFragment extends Fragment {
      */
     String[] getTournaments() {
         ArrayList<String> filenames = new ArrayList<>();
-        for (File file : getContext().getFilesDir().listFiles()) {
+        for (File file : Objects.requireNonNull(getContext()).getFilesDir().listFiles()) {
             String filename = file.getName();
             if (filename.endsWith(JSON_SUFFIX)) {
                 filenames.add(filename.subSequence(0, filename.length() - JSON_SUFFIX.length()).toString());
@@ -59,7 +60,7 @@ public abstract class SwissFragment extends Fragment {
      */
     void loadTournamentData(String filename) {
         try {
-            FileReader reader = new FileReader(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
+            FileReader reader = new FileReader(new File(Objects.requireNonNull(getContext()).getFilesDir(), filename + JSON_SUFFIX));
             mTournament = (new Gson()).fromJson(reader, Tournament.class);
             reader.close();
 
@@ -88,7 +89,7 @@ public abstract class SwissFragment extends Fragment {
      */
     void saveTournamentData(String filename) {
         try {
-            FileWriter writer = new FileWriter(new File(getContext().getFilesDir(), filename + JSON_SUFFIX));
+            FileWriter writer = new FileWriter(new File(Objects.requireNonNull(getContext()).getFilesDir(), filename + JSON_SUFFIX));
             writer.write((new Gson()).toJson(mTournament));
             writer.close();
         } catch (IOException e) {
@@ -102,7 +103,7 @@ public abstract class SwissFragment extends Fragment {
      * @param filename
      */
     void deleteTournamentData(String filename) {
-        File tournamentFile = new File(getContext().getFilesDir(), filename + JSON_SUFFIX);
+        File tournamentFile = new File(Objects.requireNonNull(getContext()).getFilesDir(), filename + JSON_SUFFIX);
         if (!tournamentFile.delete()) {
             try {
                 throw new IOException("Delete Failed");
@@ -123,7 +124,7 @@ public abstract class SwissFragment extends Fragment {
      */
     void setupButtons(View view, int leftLabel, View.OnClickListener leftListener,
                       int rightLabel, View.OnClickListener rightListener) {
-        mLeftButton = (Button) view.findViewById(R.id.left_button);
+        mLeftButton = view.findViewById(R.id.left_button);
         if (leftLabel != 0) {
             mLeftButton.setText(leftLabel);
             mLeftButton.setOnClickListener(leftListener);
@@ -131,7 +132,7 @@ public abstract class SwissFragment extends Fragment {
             mLeftButton.setVisibility(View.GONE);
         }
 
-        mRightButton = (Button) view.findViewById(R.id.right_button);
+        mRightButton = view.findViewById(R.id.right_button);
         if (rightLabel != 0) {
             mRightButton.setText(rightLabel);
             mRightButton.setOnClickListener(rightListener);
