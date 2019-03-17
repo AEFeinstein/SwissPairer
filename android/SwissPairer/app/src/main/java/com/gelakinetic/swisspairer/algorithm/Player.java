@@ -192,7 +192,7 @@ public class Player implements Comparable<Player>, Serializable {
     public boolean equals(Object obj) {
 
         /* Make sure it's a nonnull player */
-        if ((obj == null) || !(obj instanceof Player)) {
+        if (!(obj instanceof Player)) {
             return false;
         }
 
