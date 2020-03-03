@@ -3,6 +3,8 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/SwissPairer.iml" filepath="$PROJECT_DIR$/SwissPairer.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/SwissPairer-app.iml" filepath="$PROJECT_DIR$/app/SwissPairer-app.iml" group="SwissPairer/app" />
+      <module fileurl="file://$PROJECT_DIR$/android-SwissPairer.iml" filepath="$PROJECT_DIR$/android-SwissPairer.iml" group="SwissPairer" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
   </component>
