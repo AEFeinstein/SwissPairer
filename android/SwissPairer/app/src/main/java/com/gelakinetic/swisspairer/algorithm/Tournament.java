@@ -8,10 +8,10 @@ import java.util.List;
  */
 
 public class Tournament {
-    private String mName;
-    private int mMaxRounds;
     private final ArrayList<String> mTeams = new ArrayList<>();
     private final ArrayList<Round> mRounds = new ArrayList<>();
+    private String mName;
+    private int mMaxRounds;
 
     /**
      * TODO document
@@ -20,24 +20,6 @@ public class Tournament {
      */
     public List<String> getTeams() {
         return mTeams;
-    }
-
-    /**
-     * TODO document
-     *
-     * @param name
-     */
-    public void setName(String name) {
-        this.mName = name;
-    }
-
-    /**
-     * TODO document
-     *
-     * @param maxRounds
-     */
-    public void setMaxRounds(int maxRounds) {
-        this.mMaxRounds = maxRounds;
     }
 
     /**
@@ -85,9 +67,27 @@ public class Tournament {
     /**
      * TODO document
      *
+     * @param maxRounds
+     */
+    public void setMaxRounds(int maxRounds) {
+        this.mMaxRounds = maxRounds;
+    }
+
+    /**
+     * TODO document
+     *
      * @return
      */
     public String getName() {
         return mName;
+    }
+
+    /**
+     * TODO document
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        this.mName = name;
     }
 }

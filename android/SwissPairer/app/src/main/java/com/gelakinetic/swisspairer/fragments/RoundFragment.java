@@ -1,21 +1,21 @@
 package com.gelakinetic.swisspairer.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PairingListAdapter;
@@ -35,7 +35,7 @@ public class RoundFragment extends SwissFragment {
     private PlayerListAdapter mStandingsAdapter;
     private PairingListAdapter mPairingsAdapter;
     private ListView mPairingsListView;
-    private ScrollView mScrollView;
+    private NestedScrollView mScrollView;
     private ListView mStandingsListView;
 
     private int mRound;
@@ -69,7 +69,7 @@ public class RoundFragment extends SwissFragment {
             nextRoundFragment.setArguments(extras);
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            Objects.requireNonNull(getFragmentManager())
+            getParentFragmentManager()
                     .beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.fragment_container, nextRoundFragment)
@@ -89,7 +89,8 @@ public class RoundFragment extends SwissFragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mTournamentFilename = Objects.requireNonNull(getArguments()).getString(KEY_JSON_FILENAME);
+        mTournamentFilename = requireArguments().getString(KEY_JSON_FILENAME);
+        assert getArguments() != null;
         mRound = getArguments().getInt(KEY_ROUND);
 
         View v = inflater.inflate(R.layout.fragment_round, container, false);
@@ -137,12 +138,7 @@ public class RoundFragment extends SwissFragment {
             mPairingsListView = v.findViewById(R.id.pairings_list_view);
             mPairingsAdapter = new PairingListAdapter(getContext(), mTournament.getRound(mRound).getPairings());
             mPairingsListView.setAdapter(mPairingsAdapter);
-            mPairingsListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-                @Override
-                public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                    showMatchResultDialog(i);
-                }
-            });
+            mPairingsListView.setOnItemClickListener((adapterView, view, i, l) -> showMatchResultDialog(i));
             ListUtils.setDynamicHeight(mPairingsListView);
 
             /* If there aren't pairings already, make pairings */
@@ -172,7 +168,7 @@ public class RoundFragment extends SwissFragment {
      */
     private void showMatchResultDialog(final int pairingIdx) {
 
-        View customView = ((LayoutInflater) (Objects.requireNonNull(Objects.requireNonNull(getContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE)))).inflate(R.layout.dialog_report_match, null, false);
+        View customView = ((LayoutInflater) (Objects.requireNonNull(requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)))).inflate(R.layout.dialog_report_match, null, false);
 
         ((TextView) customView.findViewById(R.id.player_one_name)).setText(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOne().getName());
         ((TextView) customView.findViewById(R.id.player_two_name)).setText(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwo().getName());
@@ -185,54 +181,48 @@ public class RoundFragment extends SwissFragment {
         playerTwoSpinner.setSelection(mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwoWins());
         drawsSpinner.setSelection(mTournament.getRound(mRound).getPairing(pairingIdx).getDraws());
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(requireContext());
 
-        builder.setTitle(mTournament.getRound(mRound).getPairing(pairingIdx).getPairingString(getContext()))
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                        /* Get data from the dialog */
-                        int playerOneWins = Integer.parseInt((String) playerOneSpinner.getSelectedItem());
-                        int playerTwoWins = Integer.parseInt((String) playerTwoSpinner.getSelectedItem());
-                        int draws = Integer.parseInt((String) drawsSpinner.getSelectedItem());
+        builder.setTitle(mTournament.getRound(mRound).getPairing(pairingIdx).getPairingString(requireContext()))
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
+                    /* Get data from the dialog */
+                    int playerOneWins = Integer.parseInt((String) playerOneSpinner.getSelectedItem());
+                    int playerTwoWins = Integer.parseInt((String) playerTwoSpinner.getSelectedItem());
+                    int draws = Integer.parseInt((String) drawsSpinner.getSelectedItem());
 
-                        /* Check to see if there were any changes */
-                        boolean changed = false;
-                        if (playerOneWins != mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOneWins() ||
-                                playerTwoWins != mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwoWins() ||
-                                draws != mTournament.getRound(mRound).getPairing(pairingIdx).getDraws()) {
-                            changed = true;
-                        }
-
-                        /* Report the match */
-                        mTournament.getRound(mRound).getPairing(pairingIdx).reportMatch(playerOneWins, playerTwoWins, draws);
-
-                        /* If all matches are reported, show the button to move on */
-                        if (mTournament.getRound(mRound).allMatchesReported()) {
-                            setRightButtonVisibility(View.VISIBLE);
-                        } else {
-                            setRightButtonVisibility(View.GONE);
-                        }
-
-                        /* If something changed, delete all rounds after this one */
-                        if (changed) {
-                            for (int round = mTournament.getRounds().size() - 1; round > mRound; round--) {
-                                mTournament.getRounds().remove(round);
-                            }
-                        }
-
-                        /* Save the tournament data */
-                        saveTournamentData(mTournamentFilename); // Match Reported
-
-                        /* Update the UI */
-                        mPairingsAdapter.notifyDataSetChanged();
+                    /* Check to see if there were any changes */
+                    boolean changed = false;
+                    if (playerOneWins != mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerOneWins() ||
+                            playerTwoWins != mTournament.getRound(mRound).getPairing(pairingIdx).getPlayerTwoWins() ||
+                            draws != mTournament.getRound(mRound).getPairing(pairingIdx).getDraws()) {
+                        changed = true;
                     }
+
+                    /* Report the match */
+                    mTournament.getRound(mRound).getPairing(pairingIdx).reportMatch(playerOneWins, playerTwoWins, draws);
+
+                    /* If all matches are reported, show the button to move on */
+                    if (mTournament.getRound(mRound).allMatchesReported()) {
+                        setRightButtonVisibility(View.VISIBLE);
+                    } else {
+                        setRightButtonVisibility(View.GONE);
+                    }
+
+                    /* If something changed, delete all rounds after this one */
+                    if (changed) {
+                        if (mTournament.getRounds().size() > mRound + 1) {
+                            mTournament.getRounds().subList(mRound + 1, mTournament.getRounds().size()).clear();
+                        }
+                    }
+
+                    /* Save the tournament data */
+                    saveTournamentData(mTournamentFilename); // Match Reported
+
+                    /* Update the UI */
+                    mPairingsAdapter.notifyDataSetChanged();
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
 
-                    }
                 })
                 .setView(customView);
 
@@ -291,6 +281,7 @@ public class RoundFragment extends SwissFragment {
             return roundFragment;
         }
 
+        @SuppressWarnings("CommentedOutCode")
         @Override
         protected void onPostExecute(RoundFragment roundFragment) {
             /* Update the UI */

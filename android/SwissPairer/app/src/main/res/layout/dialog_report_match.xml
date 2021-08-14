@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/player_one_name"
             style="@style/SwissText"
             android:layout_width="0dp"
@@ -19,22 +19,22 @@
             android:layout_weight="1"
             android:gravity="center_vertical" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             style="@style/SwissText"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:text="@string/wins" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/player_one_wins_spinner"
             style="@style/SwissText"
             android:layout_width="96dp"
             android:layout_height="48dp"
             android:entries="@array/wins_options" />
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -42,7 +42,7 @@
 
         android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             style="@style/SwissText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -50,16 +50,16 @@
             android:gravity="center_vertical|end"
             android:text="@string/draws" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/draws_spinner"
             style="@style/SwissText"
             android:layout_width="96dp"
             android:layout_height="48dp"
             android:entries="@array/wins_options" />
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
@@ -67,7 +67,7 @@
 
         android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             android:id="@+id/player_two_name"
             style="@style/SwissText"
             android:layout_width="0dp"
@@ -75,14 +75,14 @@
             android:layout_weight="1"
             android:gravity="center_vertical" />
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             style="@style/SwissText"
             android:layout_width="wrap_content"
             android:layout_height="48dp"
             android:gravity="center_vertical"
             android:text="@string/wins" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/player_two_wins_spinner"
             style="@style/SwissText"
             android:layout_width="96dp"
@@ -90,7 +90,7 @@
             android:entries="@array/wins_options" />
 
 
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

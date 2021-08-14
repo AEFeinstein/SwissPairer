@@ -1,20 +1,19 @@
 package com.gelakinetic.swisspairer.fragments;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.os.Bundle;
-import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
-import androidx.appcompat.app.AlertDialog;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.adapters.PlayerListAdapter;
@@ -27,10 +26,6 @@ import java.util.Objects;
  */
 
 public class SetPlayersFragment extends SwissFragment {
-
-    private PlayerListAdapter mPlayersAdapter;
-    private ListView mListViewPlayers;
-
 
     private final View.OnClickListener continueListener = new View.OnClickListener() {
         /**
@@ -71,14 +66,14 @@ public class SetPlayersFragment extends SwissFragment {
             firstRoundFragment.setArguments(extras);
 
             // Add the fragment to the 'fragment_container' FrameLayout
-            Objects.requireNonNull(getFragmentManager())
+            getParentFragmentManager()
                     .beginTransaction()
                     .addToBackStack(null)
                     .replace(R.id.fragment_container, firstRoundFragment)
                     .commit();
         }
     };
-
+    private PlayerListAdapter mPlayersAdapter;
     private final View.OnClickListener addListener = new View.OnClickListener() {
         /**
          * TODO document
@@ -89,6 +84,7 @@ public class SetPlayersFragment extends SwissFragment {
             showAddPlayerDialog(-1);
         }
     };
+    private ListView mListViewPlayers;
 
     /**
      * TODO document
@@ -100,9 +96,10 @@ public class SetPlayersFragment extends SwissFragment {
      */
     @Nullable
     @Override
+    @SuppressWarnings("CommentedOutCode")
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 
-        mTournamentFilename = Objects.requireNonNull(getArguments()).getString(KEY_JSON_FILENAME);
+        mTournamentFilename = requireArguments().getString(KEY_JSON_FILENAME);
 
         View view = inflater.inflate(R.layout.fragment_set_players, container, false);
 
@@ -111,12 +108,7 @@ public class SetPlayersFragment extends SwissFragment {
         setLeftButtonVisibility(View.VISIBLE);
 
         mListViewPlayers = view.findViewById(R.id.player_list);
-        mListViewPlayers.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-            @Override
-            public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
-                showAddPlayerDialog(i);
-            }
-        });
+        mListViewPlayers.setOnItemClickListener((adapterView, view1, i, l) -> showAddPlayerDialog(i));
 
 //        //TODO just for testing
 //        if (mTournament.getRound(0).getPlayersSize() == 0) {
@@ -168,7 +160,7 @@ public class SetPlayersFragment extends SwissFragment {
      */
     private void showAddPlayerDialog(final int playerIdx) {
 
-        View customView = ((LayoutInflater) (Objects.requireNonNull(Objects.requireNonNull(getContext()).getSystemService(Context.LAYOUT_INFLATER_SERVICE)))).inflate(R.layout.dialog_add_player, null, false);
+        View customView = ((LayoutInflater) (Objects.requireNonNull(requireContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE)))).inflate(R.layout.dialog_add_player, null, false);
 
         final EditText playerNameEditText = customView.findViewById(R.id.player_name_edit_text);
 
@@ -176,7 +168,7 @@ public class SetPlayersFragment extends SwissFragment {
         if (mTournament.getTeams() == null || mTournament.getTeams().size() == 0) {
             customView.findViewById(R.id.team_entry).setVisibility(View.GONE);
         } else {
-            ArrayAdapter teamAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mTournament.getTeams());
+            ArrayAdapter<String> teamAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, mTournament.getTeams());
             teamAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             teamSpinner.setAdapter(teamAdapter);
         }
@@ -193,66 +185,57 @@ public class SetPlayersFragment extends SwissFragment {
             }
         }
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(getContext());
+        AlertDialog.Builder builder = new AlertDialog.Builder(Objects.requireNonNull(requireContext()));
 
         builder.setTitle(R.string.add_a_player)
-                .setPositiveButton(R.string.ok, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
+                .setPositiveButton(R.string.ok, (dialogInterface, i) -> {
 
-                        String newPlayerName = playerNameEditText.getText().toString();
-                        String newTeamName;
-                        try {
-                            newTeamName = teamSpinner.getSelectedItem().toString();
-                        } catch (NullPointerException e) {
-                            newTeamName = null;
-                        }
-                        Player newPlayer = new Player(newPlayerName, newTeamName, false);
+                    String newPlayerName = playerNameEditText.getText().toString();
+                    String newTeamName;
+                    try {
+                        newTeamName = teamSpinner.getSelectedItem().toString();
+                    } catch (NullPointerException e) {
+                        newTeamName = null;
+                    }
+                    Player newPlayer = new Player(newPlayerName, newTeamName, false);
 
-                        if (!newPlayerName.isEmpty()) {
-                            if (playerIdx >= 0) {
-                                for (int playersIdx = 0; playersIdx < mTournament.getRound(0).getPlayersSize(); playersIdx++) {
-                                    if (playersIdx != playerIdx &&
-                                            mTournament.getRound(0).getPlayer(playersIdx).getName().equals(newPlayerName) &&
-                                            mTournament.getRound(0).getPlayer(playersIdx).getTeam().equals(newTeamName)) {
-                                        return; // duplicate
-                                    }
+                    if (!newPlayerName.isEmpty()) {
+                        if (playerIdx >= 0) {
+                            for (int playersIdx = 0; playersIdx < mTournament.getRound(0).getPlayersSize(); playersIdx++) {
+                                if (playersIdx != playerIdx &&
+                                        mTournament.getRound(0).getPlayer(playersIdx).getName().equals(newPlayerName) &&
+                                        mTournament.getRound(0).getPlayer(playersIdx).getTeam().equals(newTeamName)) {
+                                    return; // duplicate
                                 }
-                                mTournament.getRound(0).getPlayer(playerIdx).setName(newPlayerName);
-                                mTournament.getRound(0).getPlayer(playerIdx).setTeam(newTeamName);
-                            } else if (!mTournament.getRound(0).containsPlayer(newPlayer)) {
-                                mTournament.getRound(0).addPlayer(newPlayer);
                             }
+                            mTournament.getRound(0).getPlayer(playerIdx).setName(newPlayerName);
+                            mTournament.getRound(0).getPlayer(playerIdx).setTeam(newTeamName);
+                        } else if (!mTournament.getRound(0).containsPlayer(newPlayer)) {
+                            mTournament.getRound(0).addPlayer(newPlayer);
                         }
-                        mPlayersAdapter.notifyDataSetChanged();
+                    }
+                    mPlayersAdapter.notifyDataSetChanged();
 
-                        /* If player data changed, clear the rounds and save the tournament */
-                        while(mTournament.getRounds().size() > 1) {
-                            mTournament.getRounds().remove(1);
-                        }
-                        saveTournamentData(mTournamentFilename); // Player Added
+                    /* If player data changed, clear the rounds and save the tournament */
+                    while (mTournament.getRounds().size() > 1) {
+                        mTournament.getRounds().remove(1);
                     }
+                    saveTournamentData(mTournamentFilename); // Player Added
                 })
-                .setNegativeButton(R.string.cancel, new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialogInterface, int i) {
-                    }
+                .setNegativeButton(R.string.cancel, (dialogInterface, i) -> {
                 })
                 .setView(customView);
 
         if (playerIdx >= 0) {
-            builder.setNeutralButton(R.string.remove, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialogInterface, int i) {
-                    mTournament.getRound(0).removePlayer(playerIdx);
-                    mPlayersAdapter.notifyDataSetChanged();
+            builder.setNeutralButton(R.string.remove, (dialogInterface, i) -> {
+                mTournament.getRound(0).removePlayer(playerIdx);
+                mPlayersAdapter.notifyDataSetChanged();
 
-                    /* If player data changed, clear the rounds and save the tournament */
-                    while(mTournament.getRounds().size() > 1) {
-                        mTournament.getRounds().remove(1);
-                    }
-                    saveTournamentData(mTournamentFilename); // Player Removed
+                /* If player data changed, clear the rounds and save the tournament */
+                while (mTournament.getRounds().size() > 1) {
+                    mTournament.getRounds().remove(1);
                 }
+                saveTournamentData(mTournamentFilename); // Player Removed
             });
         }
 

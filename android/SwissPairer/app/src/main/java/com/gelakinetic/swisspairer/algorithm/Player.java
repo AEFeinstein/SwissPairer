@@ -10,16 +10,13 @@ import java.util.UUID;
 public class Player implements Comparable<Player>, Serializable {
 
     private final long mUuid;
-
+    private final ArrayList<Long> mPlayedAgainst;
+    private final boolean mIsBye;
     private String mName;
     private String mTeam;
-
     private int mWins = 0;
     private int mLosses = 0;
     private int mDraws = 0;
-
-    private final ArrayList<Long> mPlayedAgainst;
-    private final boolean mIsBye;
 
     /**
      * TODO document
@@ -165,6 +162,15 @@ public class Player implements Comparable<Player>, Serializable {
     /**
      * TODO document
      *
+     * @param team
+     */
+    public void setTeam(String team) {
+        this.mTeam = team;
+    }
+
+    /**
+     * TODO document
+     *
      * @param other
      * @return
      */
@@ -185,6 +191,15 @@ public class Player implements Comparable<Player>, Serializable {
     /**
      * TODO document
      *
+     * @param name
+     */
+    public void setName(String name) {
+        this.mName = name;
+    }
+
+    /**
+     * TODO document
+     *
      * @param obj
      * @return
      */
@@ -199,24 +214,6 @@ public class Player implements Comparable<Player>, Serializable {
         String thatTeam = ((Player) obj).getTeam();
         return ((thatTeam == null && getTeam() == null) || thatTeam != null && thatTeam.equals(getTeam())) &&
                 ((Player) obj).getName().equals(getName());
-    }
-
-    /**
-     * TODO document
-     *
-     * @param name
-     */
-    public void setName(String name) {
-        this.mName = name;
-    }
-
-    /**
-     * TODO document
-     *
-     * @param team
-     */
-    public void setTeam(String team) {
-        this.mTeam = team;
     }
 
     /**

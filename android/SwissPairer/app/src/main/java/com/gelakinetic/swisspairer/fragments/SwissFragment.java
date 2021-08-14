@@ -1,8 +1,9 @@
 package com.gelakinetic.swisspairer.fragments;
 
-import androidx.fragment.app.Fragment;
 import android.view.View;
 import android.widget.Button;
+
+import androidx.fragment.app.Fragment;
 
 import com.gelakinetic.swisspairer.R;
 import com.gelakinetic.swisspairer.algorithm.Pairing;
@@ -23,17 +24,14 @@ import java.util.Objects;
 
 public abstract class SwissFragment extends Fragment {
 
-    Tournament mTournament = new Tournament();
-    String mTournamentFilename;
-
     static final String KEY_ROUND = "Round";
     static final String KEY_JSON_FILENAME = "Filename";
-
+    private static final String JSON_SUFFIX = ".json";
+    Tournament mTournament = new Tournament();
+    String mTournamentFilename;
     private Button mLeftButton;
     private Button mRightButton;
     private View mButtonLayout;
-
-    private static final String JSON_SUFFIX = ".json";
 
     /**
      * TODO document
@@ -42,7 +40,7 @@ public abstract class SwissFragment extends Fragment {
      */
     String[] getTournaments() {
         ArrayList<String> filenames = new ArrayList<>();
-        for (File file : Objects.requireNonNull(getContext()).getFilesDir().listFiles()) {
+        for (File file : Objects.requireNonNull(requireContext().getFilesDir().listFiles())) {
             String filename = file.getName();
             if (filename.endsWith(JSON_SUFFIX)) {
                 filenames.add(filename.subSequence(0, filename.length() - JSON_SUFFIX.length()).toString());
@@ -60,7 +58,7 @@ public abstract class SwissFragment extends Fragment {
      */
     void loadTournamentData(String filename) {
         try {
-            FileReader reader = new FileReader(new File(Objects.requireNonNull(getContext()).getFilesDir(), filename + JSON_SUFFIX));
+            FileReader reader = new FileReader(new File(requireContext().getFilesDir(), filename + JSON_SUFFIX));
             mTournament = (new Gson()).fromJson(reader, Tournament.class);
             reader.close();
 
@@ -68,7 +66,7 @@ public abstract class SwissFragment extends Fragment {
              * references to the player objects in the pairings
              */
             for (Round round : mTournament.getRounds()) {
-                if(!round.getPairings().isEmpty()) {
+                if (!round.getPairings().isEmpty()) {
                     round.getPlayers().clear();
                     for (Pairing pairing : round.getPairings()) {
                         round.addPlayer(pairing.getPlayerOne());
@@ -89,7 +87,7 @@ public abstract class SwissFragment extends Fragment {
      */
     void saveTournamentData(String filename) {
         try {
-            FileWriter writer = new FileWriter(new File(Objects.requireNonNull(getContext()).getFilesDir(), filename + JSON_SUFFIX));
+            FileWriter writer = new FileWriter(new File(requireContext().getFilesDir(), filename + JSON_SUFFIX));
             writer.write((new Gson()).toJson(mTournament));
             writer.close();
         } catch (IOException e) {
@@ -103,7 +101,7 @@ public abstract class SwissFragment extends Fragment {
      * @param filename
      */
     void deleteTournamentData(String filename) {
-        File tournamentFile = new File(Objects.requireNonNull(getContext()).getFilesDir(), filename + JSON_SUFFIX);
+        File tournamentFile = new File(requireContext().getFilesDir(), filename + JSON_SUFFIX);
         if (!tournamentFile.delete()) {
             try {
                 throw new IOException("Delete Failed");

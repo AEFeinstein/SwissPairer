@@ -1,6 +1,7 @@
 package com.gelakinetic.swisspairer.algorithm;
 
 import android.content.Context;
+
 import androidx.annotation.NonNull;
 
 import com.gelakinetic.swisspairer.R;

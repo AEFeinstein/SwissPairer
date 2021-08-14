@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.appcompat.widget.LinearLayoutCompat xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <EditText
+    <com.google.android.material.textfield.TextInputEditText
         android:id="@+id/tournament_name"
         android:layout_width="match_parent"
         android:layout_height="48dp"
@@ -16,14 +16,14 @@
 
     <include layout="@layout/divider" />
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             style="@style/SwissText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -31,23 +31,23 @@
             android:gravity="center_vertical"
             android:text="@string/num_rounds" />
 
-        <Spinner
+        <androidx.appcompat.widget.AppCompatSpinner
             android:id="@+id/num_round_spinner"
             android:layout_width="96dp"
             android:layout_height="match_parent"
             android:entries="@array/round_options" />
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
     <include layout="@layout/divider" />
 
-    <LinearLayout
+    <androidx.appcompat.widget.LinearLayoutCompat
         android:layout_width="match_parent"
         android:layout_height="48dp"
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:layout_marginRight="@dimen/activity_horizontal_margin"
         android:orientation="horizontal">
 
-        <TextView
+        <com.google.android.material.textview.MaterialTextView
             style="@style/SwissText"
             android:layout_width="0dp"
             android:layout_height="match_parent"
@@ -55,11 +55,11 @@
             android:gravity="center_vertical"
             android:text="@string/team_event" />
 
-        <CheckBox
+        <com.google.android.material.checkbox.MaterialCheckBox
             android:id="@+id/team_checkbox"
             android:layout_width="wrap_content"
             android:layout_height="match_parent" />
-    </LinearLayout>
+    </androidx.appcompat.widget.LinearLayoutCompat>
 
 
     <ListView
@@ -70,4 +70,4 @@
 
     <include layout="@layout/bottom_button_bar" />
 
-</LinearLayout>
+</androidx.appcompat.widget.LinearLayoutCompat>

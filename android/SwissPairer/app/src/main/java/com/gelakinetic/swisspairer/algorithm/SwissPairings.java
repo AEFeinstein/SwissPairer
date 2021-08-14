@@ -53,7 +53,7 @@ public class SwissPairings {
                 teamIdx = (teamIdx + 1) % teams.size();
             }
 
-            Player copy[] = new Player[players.size()];
+            Player[] copy = new Player[players.size()];
             for (int i = 0; i < copy.length; i++) {
                 copy[i] = players.get(i);
             }
@@ -97,18 +97,18 @@ public class SwissPairings {
      */
     public static ArrayList<Pairing> pairTree(ArrayList<Player> players) {
 
-		/* Randomize the player order for pairing */
+        /* Randomize the player order for pairing */
         Collections.shuffle(players);
 
-		/* Make a root node for the search tree */
+        /* Make a root node for the search tree */
         ArrayList<Pairing> pairings = new ArrayList<>();
         PairingTreeNode root = new PairingTreeNode(null, null);
         root.setNumPlayers(players.size());
 
-		/* Recursively search for the best pairing */
+        /* Recursively search for the best pairing */
         recursivelyFindPairings(root, players, pairings);
 
-		/* Return the pairing */
+        /* Return the pairing */
         return pairings;
     }
 
@@ -133,7 +133,7 @@ public class SwissPairings {
     private static boolean recursivelyFindPairings(PairingTreeNode parent,
                                                    ArrayList<Player> players, ArrayList<Pairing> pairings) {
 
-		/* Find the unpaired player with the most points */
+        /* Find the unpaired player with the most points */
         int maxPoints = -1;
         Player maxPointPlayer = null;
         for (Player player : players) {
@@ -144,12 +144,12 @@ public class SwissPairings {
             }
         }
 
-		/* Something failed horribly */
+        /* Something failed horribly */
         if (maxPointPlayer == null) {
             return false;
         }
 
-		/* Find all potential matches for that player */
+        /* Find all potential matches for that player */
         ArrayList<Pairing> tmpPairings = new ArrayList<>();
         for (Player player : players) {
             if (player.canPairAgainst(maxPointPlayer) &&
@@ -158,7 +158,7 @@ public class SwissPairings {
             }
         }
 
-		/* Something failed horribly */
+        /* Something failed horribly */
         switch (tmpPairings.size()) {
             case 0:
                 /* No pairings, so stop searching */
@@ -171,18 +171,18 @@ public class SwissPairings {
                 Collections.sort(tmpPairings);
         }
 
-		/* Add all pairings to the search tree */
+        /* Add all pairings to the search tree */
         for (Pairing pairing : tmpPairings) {
 
-			/* Add the pair to the search tree */
+            /* Add the pair to the search tree */
             PairingTreeNode child = new PairingTreeNode(parent, pairing);
 
-			/* Check if the search can continue */
+            /* Check if the search can continue */
             if (!child.canHaveChildren()) {
                 /* There are no more players to pair, so we're done
                  * Start exiting from the recursion, adding to the list of
-				 * pairs at each level
-				 */
+                 * pairs at each level
+                 */
                 pairings.add(0, child.getPairing());
                 return true;
             } else {
@@ -190,14 +190,14 @@ public class SwissPairings {
                 if (recursivelyFindPairings(child, players, pairings)) {
                     /* Add this pair to the pairings and keep exiting from
                      * the recursion
-					 */
+                     */
                     pairings.add(0, child.getPairing());
                     return true;
                 }
             }
         }
 
-		/* This branch of the search can't pair all players, so return false */
+        /* This branch of the search can't pair all players, so return false */
         return false;
     }
 
